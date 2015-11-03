@@ -25,10 +25,12 @@
 #include <utility>
 #include <memory>
 
-#include "bitmap.hpp"
+//#include "bitmap.hpp"
+
 #include "colors.hpp"
 #include "rect.hpp"
 #include "ellipse.hpp"
+#include "abstract_bitmap.hpp"
 
 using std::size_t;
 
