@@ -38,7 +38,8 @@
 #include <string>
 
 template<class CaptureMaker, class... ExtraArguments>
-int recompress_or_record( std::string const & input_filename, std::string & output_filename
+int recompress_or_record( bool & program_requested_to_shutdown
+                        , std::string const & input_filename, std::string & output_filename
                         , int capture_bpp, int wrm_compression_algorithm_
                         , Inifile & ini, bool remove_input_file, bool infile_is_encrypted
                         , bool auto_output_file, uint32_t begin_cap, uint32_t end_cap
@@ -57,7 +58,8 @@ void remove_file(InWrmTrans & in_wrm_trans, const char * hash_path, const char *
                 , const char * infile_basename, const char * infile_extension, bool is_encrypted);
 
 template<class CaptureMaker, class... ExtraArguments>
-static int do_record( Transport & in_wrm_trans, const timeval begin_record, const timeval end_record
+static int do_record( bool & program_requested_to_shutdown
+                    , Transport & in_wrm_trans, const timeval begin_record, const timeval end_record
                     , const timeval begin_capture, const timeval end_capture, std::string const & output_filename
                     , int capture_bpp, int wrm_compression_algorithm_
                     , Inifile & ini, unsigned file_count, uint32_t order_count, uint32_t clear, unsigned zoom
@@ -65,8 +67,8 @@ static int do_record( Transport & in_wrm_trans, const timeval begin_record, cons
                     , bool show_file_metadata, bool show_statistics, uint32_t verbose
                     , ExtraArguments && ... extra_argument);
 
-static int do_recompress( CryptoContext & cctx, Transport & in_wrm_trans, const timeval begin_record
-                        , int wrm_compression_algorithm_
+static int do_recompress( bool & program_requested_to_shutdown, CryptoContext & cctx, Transport & in_wrm_trans
+                        , const timeval begin_record, int wrm_compression_algorithm_
                         , std::string const & output_filename, Inifile & ini, uint32_t verbose);
 
 
@@ -83,40 +85,17 @@ static const signed USE_ORIGINAL_COMPRESSION_ALGORITHM = 0xFFFFFFFF;
 static const signed USE_ORIGINAL_COLOR_DEPTH           = 0xFFFFFFFF;
 
 
-bool program_requested_to_shutdown = false;
-
-void shutdown(int sig)
-{
-    LOG(LOG_INFO, "shutting down : signal %d pid=%d\n", sig, getpid());
-
-    program_requested_to_shutdown = true;
-}
-
-void init_signals(void)
-{
-    struct sigaction sa;
-
-    sa.sa_flags = 0;
-
-    sigemptyset(&sa.sa_mask);
-    sigaddset(&sa.sa_mask, SIGTERM);
-
-    sa.sa_handler = shutdown;
-    sigaction(SIGTERM, &sa, nullptr);
-}
-
 
 template<
     class CaptureMaker, class AddProgramOtion, class ParseFormat
   , /*class InitCryptoIni, */class HasExtraCapture, class... ExtraArguments>
 int app_recorder( int argc, char ** argv, const char * copyright_notice
+                , bool & program_requested_to_shutdown
                 , AddProgramOtion add_prog_option, ParseFormat parse_format
                 , /*InitCryptoIni init_crypto, */HasExtraCapture has_extra_capture
                 , ExtraArguments&&... extra_argument)
 {
     openlog("redrec", LOG_CONS | LOG_PERROR, LOG_USER);
-
-    init_signals();
 
     unsigned png_width  = 0;
     unsigned png_height = 0;
@@ -390,7 +369,8 @@ int app_recorder( int argc, char ** argv, const char * copyright_notice
     }
 
     return recompress_or_record<CaptureMaker>(
-        input_filename, output_filename, capture_bpp, wrm_compression_algorithm_, ini
+        program_requested_to_shutdown
+      , input_filename, output_filename, capture_bpp, wrm_compression_algorithm_, ini
       , remove_input_file, infile_is_encrypted, auto_output_file
       , begin_cap, end_cap, order_count, clear, zoom
       , png_width, png_height
@@ -425,7 +405,8 @@ int is_encrypted_file(const char * input_filename, bool & infile_is_encrypted)
 
 
 template<class CaptureMaker, class... ExtraArguments>
-int recompress_or_record( std::string const & input_filename, std::string & output_filename
+int recompress_or_record( bool & program_requested_to_shutdown
+                        , std::string const & input_filename, std::string & output_filename
                         , int capture_bpp, int wrm_compression_algorithm_
                         , Inifile & ini, bool remove_input_file, bool infile_is_encrypted
                         , bool auto_output_file, uint32_t begin_cap, uint32_t end_cap
@@ -535,7 +516,8 @@ int recompress_or_record( std::string const & input_filename, std::string & outp
              || order_count)
                 ? ((verbose ? void(std::cout << "[A]"<< std::endl) : void())
                   , do_record<CaptureMaker>(
-                      trans, begin_record, end_record, begin_capture, end_capture
+                      program_requested_to_shutdown
+                    , trans, begin_record, end_record, begin_capture, end_capture
                     , output_filename, capture_bpp, wrm_compression_algorithm_, ini, file_count, order_count, clear, zoom
                     , png_width, png_height
                     , show_file_metadata, show_statistics, verbose
@@ -543,7 +525,7 @@ int recompress_or_record( std::string const & input_filename, std::string & outp
                     )
                 )
                 : ((verbose ? void(std::cout << "[B]"<< std::endl) : void())
-                  , do_recompress(cctx, trans, begin_record, wrm_compression_algorithm_, output_filename, ini, verbose)
+                  , do_recompress(program_requested_to_shutdown, cctx, trans, begin_record, wrm_compression_algorithm_, output_filename, ini, verbose)
                 )
             ;
         }
@@ -648,8 +630,8 @@ void remove_file( InWrmTrans & in_wrm_trans, const char * hash_path, const char 
 }
 
 inline
-static int do_recompress( CryptoContext & cctx, Transport & in_wrm_trans, const timeval begin_record
-                        , int wrm_compression_algorithm_
+static int do_recompress( bool & program_requested_to_shutdown, CryptoContext & cctx, Transport & in_wrm_trans
+                        , const timeval begin_record , int wrm_compression_algorithm_
                         , std::string const & output_filename, Inifile & ini, uint32_t verbose) {
     FileToChunk player(&in_wrm_trans, 0);
 
@@ -846,7 +828,8 @@ static void raise_error(std::string const & output_filename, int code, const cha
 }
 
 template<class CaptureMaker, class... ExtraArguments>
-static int do_record( Transport & in_wrm_trans, const timeval begin_record, const timeval end_record
+static int do_record( bool & program_requested_to_shutdown
+                    , Transport & in_wrm_trans, const timeval begin_record, const timeval end_record
                     , const timeval begin_capture, const timeval end_capture, std::string const & output_filename
                     , int capture_bpp, int wrm_compression_algorithm_
                     , Inifile & ini, unsigned file_count, uint32_t order_count, uint32_t clear, unsigned zoom

@@ -32,8 +32,32 @@
 
 namespace po = program_options;
 
+bool program_requested_to_shutdown = false;
+
+void shutdown(int sig)
+{
+    LOG(LOG_INFO, "shutting down : signal %d pid=%d\n", sig, getpid());
+
+    program_requested_to_shutdown = true;
+}
+
+void init_signals(void)
+{
+    struct sigaction sa;
+
+    sa.sa_flags = 0;
+
+    sigemptyset(&sa.sa_mask);
+    sigaddset(&sa.sa_mask, SIGTERM);
+
+    sa.sa_handler = shutdown;
+    sigaction(SIGTERM, &sa, nullptr);
+}
+
 int main(int argc, char** argv)
 {
+    init_signals();
+
     struct CaptureMaker {
         Capture capture;
 
@@ -51,6 +75,7 @@ int main(int argc, char** argv)
       , "ReDemPtion RECorder " VERSION ": An RDP movie converter.\n"
         "Copyright (C) Wallix 2010-2015.\n"
         "Christophe Grosjean, Jonathan Poelen and Raphael Zhou."
+      , program_requested_to_shutdown
       , [](po::options_description const &){}
       , [](Inifile const & ini, po::variables_map const &, std::string const & output_filename) -> int {
             if (   output_filename.length()
