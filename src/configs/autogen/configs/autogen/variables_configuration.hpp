@@ -681,23 +681,6 @@ namespace cfg {
         };
     };
 
-    struct crypto {
-        struct key0 {
-            static constexpr ::configs::VariableProperties properties() {
-                return ::configs::VariableProperties::none;
-            }
-            using type = ::configs::StaticKeyString<32>;
-            type value{"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F"};
-        };
-        struct key1 {
-            static constexpr ::configs::VariableProperties properties() {
-                return ::configs::VariableProperties::none;
-            }
-            using type = ::configs::StaticKeyString<32>;
-            type value{"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F"};
-        };
-    };
-
     struct debug {
         struct x224 {
             static constexpr ::configs::VariableProperties properties() {
@@ -1876,11 +1859,6 @@ struct context
 , cfg::context::crypto_key
 { static constexpr bool is_section = true; };
 
-struct crypto
-: cfg::crypto::key0
-, cfg::crypto::key1
-{ static constexpr bool is_section = true; };
-
 struct debug
 : cfg::debug::x224
 , cfg::debug::mcs
@@ -2032,7 +2010,6 @@ namespace configs {
 struct VariablesConfiguration
 : cfg_section::client
 , cfg_section::context
-, cfg_section::crypto
 , cfg_section::debug
 , cfg_section::globals
 , cfg_section::internal_mod

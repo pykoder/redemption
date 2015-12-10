@@ -32,7 +32,7 @@ namespace transbuf {
         {
             unsigned char derivator[DERIVATOR_LENGTH];
             get_derivator(filename, derivator, DERIVATOR_LENGTH);
-            if (-1 == compute_hmac(trace_key, ctx->crypto_key, derivator)) {
+            if (-1 == compute_hmac(trace_key, ctx->get_crypto_key()/*crypto_key*/, derivator)) {
                 return -1;
             }
 
@@ -119,7 +119,7 @@ namespace transbuf {
 
         int close(unsigned char hash[MD_HASH_LENGTH << 1])
         {
-            const int res1 = this->encrypt.close(this->file, hash, this->ctx->hmac_key);
+            const int res1 = this->encrypt.close(this->file, hash, this->ctx->get_hmac_key()/*hmac_key*/);
             const int res2 = this->file.close();
             return res1 < 0 ? res1 : (res2 < 0 ? res2 : 0);
         }

@@ -45,10 +45,10 @@ enum {
 #define CRYPTO_KEY_LENGTH 32
 #define HMAC_KEY_LENGTH   CRYPTO_KEY_LENGTH
 
-struct CryptoContext {
+struct CryptoContext;/* {
     unsigned char hmac_key[HMAC_KEY_LENGTH];
     unsigned char crypto_key[CRYPTO_KEY_LENGTH];
-};
+};*/
 
 /* Standard unbase64, store result in buffer. Returns written bytes
  */

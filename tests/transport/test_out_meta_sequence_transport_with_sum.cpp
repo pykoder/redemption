@@ -33,7 +33,13 @@ BOOST_AUTO_TEST_CASE(TestOutmetaTransportWithSum)
 {
     unsigned sec_start = 1352304810;
 
-    CryptoContext cctx;
+    CryptoContext cctx(
+            "1234567890"
+            "1234567890"
+            "1234567890"
+            "12"
+        );
+/*
     memset(&cctx, 0, sizeof(cctx));
     memcpy(cctx.hmac_key,
        "1234567890"
@@ -42,6 +48,7 @@ BOOST_AUTO_TEST_CASE(TestOutmetaTransportWithSum)
        "12",
        sizeof(cctx.hmac_key)
     );
+*/
 
     {
         timeval now;

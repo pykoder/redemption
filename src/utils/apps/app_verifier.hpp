@@ -123,8 +123,10 @@ static inline bool check_file(const char * file_path, bool is_status_enabled,
         detail::MetaLine const & meta_line, size_t len_to_check,
         CryptoContext * cctx) {
     const bool is_checksumed = true;
-    return check_file(file_path, is_checksumed, cctx->hmac_key,
-        sizeof(cctx->hmac_key), len_to_check, is_status_enabled, meta_line);
+    unsigned char (&hmac_key)[MD_HASH_LENGTH] = cctx->get_hmac_key();
+    static_assert(sizeof(hmac_key) == MD_HASH_LENGTH, "Invalid hmac key size");
+    return check_file(file_path, is_checksumed, /*cctx->*/hmac_key,
+        sizeof(/*cctx->*/hmac_key), len_to_check, is_status_enabled, meta_line);
 }
 
 static inline bool check_file(const char * file_path, bool is_status_enabled,
@@ -354,12 +356,14 @@ int check_encrypted_or_checksumed_file(std::string const & input_filename,
     return 0;
 }
 
-template<class F>
-int app_verifier(int argc, char ** argv, const char * copyright_notice, F crypto_context_initializer) {
+//template<class F>
+int app_verifier(int argc, char ** argv, const char * copyright_notice/*, F crypto_context_initializer*/) {
+/*
     static_assert(
         std::is_same<int, decltype(crypto_context_initializer(std::declval<CryptoContext&>()))>::value
       , "crypto_context_initializer result type may be 'int'"
     );
+*/
 
     openlog("verifier", LOG_CONS | LOG_PERROR, LOG_USER);
 
@@ -463,13 +467,14 @@ int app_verifier(int argc, char ** argv, const char * copyright_notice, F crypto
         exit(-1);
     }
 
-    CryptoContext cctx;
-    memset(&cctx, 0, sizeof(cctx));
+    CryptoContext cctx(true);
+//    memset(&cctx, 0, sizeof(cctx));
     if (infile_is_encrypted) {
+/*
         if (int status = crypto_context_initializer(cctx)) {
             return status;
         }
-
+*/
         OpenSSL_add_all_digests();
     }
 

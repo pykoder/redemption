@@ -22,14 +22,16 @@
 #include "program_options/program_options.hpp"
 
 
-template<class F>
+//template<class F>
 // crypto_context_initializer = int(CryptoContext&)
-int app_decrypter(int argc, char ** argv, const char * copyright_notice, F crypto_context_initializer)
+int app_decrypter(int argc, char ** argv, const char * copyright_notice/*, F crypto_context_initializer*/)
 {
+/*
     static_assert(
         std::is_same<int, decltype(crypto_context_initializer(std::declval<CryptoContext&>()))>::value
       , "crypto_context_initializer result type may be 'int'"
     );
+*/
 
     openlog("decrypter", LOG_CONS | LOG_PERROR, LOG_USER);
 
@@ -93,11 +95,13 @@ int app_decrypter(int argc, char ** argv, const char * copyright_notice, F crypt
         return 0;
     }
 
-    CryptoContext cctx;
+    CryptoContext cctx(true);
+/*
     memset(&cctx, 0, sizeof(cctx));
     if (int status = crypto_context_initializer(cctx)) {
         return status;
     }
+*/
 
     OpenSSL_add_all_digests();
 

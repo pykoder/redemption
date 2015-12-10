@@ -108,10 +108,10 @@ void init_signals(void)
 
 template<
     class CaptureMaker, class AddProgramOtion, class ParseFormat
-  , class InitCryptoIni, class HasExtraCapture, class... ExtraArguments>
+  , /*class InitCryptoIni, */class HasExtraCapture, class... ExtraArguments>
 int app_recorder( int argc, char ** argv, const char * copyright_notice
                 , AddProgramOtion add_prog_option, ParseFormat parse_format
-                , InitCryptoIni init_crypto, HasExtraCapture has_extra_capture
+                , /*InitCryptoIni init_crypto, */HasExtraCapture has_extra_capture
                 , ExtraArguments&&... extra_argument)
 {
     openlog("redrec", LOG_CONS | LOG_PERROR, LOG_USER);
@@ -381,9 +381,11 @@ int app_recorder( int argc, char ** argv, const char * copyright_notice
     }
 
     if (infile_is_encrypted || (ini.get<cfg::globals::trace_type>() == configs::TraceType::cryptofile)) {
+/*
         if (int status = init_crypto(ini.get_ref<cfg::crypto::key0>(), ini.get_ref<cfg::crypto::key1>())) {
             return status;
         }
+*/
         OpenSSL_add_all_digests();
     }
 
@@ -484,10 +486,12 @@ int recompress_or_record( std::string const & input_filename, std::string & outp
     TODO("also check if it contains any wrm at all and at wich one we should start depending on input time")
     TODO("if start and stop time are outside wrm, users should also be warned")
 
-    CryptoContext cctx;
+    CryptoContext cctx(true);
+/*
     memset(&cctx, 0, sizeof(cctx));
     memcpy(cctx.crypto_key, ini.get<cfg::crypto::key0>(), sizeof(cctx.crypto_key));
     memcpy(cctx.hmac_key,   ini.get<cfg::crypto::key1>(), sizeof(cctx.hmac_key  ));
+*/
 
     timeval  begin_record = { 0, 0 };
     timeval  end_record   = { 0, 0 };

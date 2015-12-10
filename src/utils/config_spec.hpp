@@ -433,6 +433,7 @@ void config_spec_definition(Writer && W)
         }, set(1));
     });
 
+/*
     W.section("crypto", [&]
     {
         W.member(H, type_<StaticKeyString<32>>(), "key0", set(
@@ -448,6 +449,7 @@ void config_spec_definition(Writer && W)
             "\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F"
         ));
     });
+*/
 
     W.section("debug", [&]
     {

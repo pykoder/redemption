@@ -53,21 +53,15 @@ BOOST_AUTO_TEST_CASE(TestVerifierCheckFileHash)
     /************************
     * Manage encryption key *
     ************************/
-    CryptoContext cctx = {
-        // hmac_key
-        {
-        },
-        // Crypto key
-        {
-         0,  1,  2,  3,  4,  5,  6,  7,
-         8,  9, 10, 11, 12, 13, 14, 15,
-        16, 17, 18, 19, 20, 21, 22, 23,
-        24, 25, 26, 27, 28, 29, 30, 31
-        },
-    };
+    CryptoContext cctx(
+            "\x00\x01\x02\x03\x04\x05\x06\x07"
+            "\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F"
+            "\x10\x11\x12\x13\x14\x15\x16\x17"
+            "\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F"
+        );
 
     const unsigned char HASH_DERIVATOR[] = { 0x95, 0x8b, 0xcb, 0xd4, 0xee, 0xa9, 0x89, 0x5b };
-    BOOST_CHECK(0 == compute_hmac(cctx.hmac_key, cctx.crypto_key, HASH_DERIVATOR));
+    BOOST_CHECK(0 == compute_hmac(cctx.get_hmac_key()/*hmac_key*/, cctx.get_crypto_key()/*crypto_key*/, HASH_DERIVATOR));
     OpenSSL_add_all_digests();
 
     // Any iv key would do, we are checking round trip
@@ -81,7 +75,7 @@ BOOST_AUTO_TEST_CASE(TestVerifierCheckFileHash)
     unsigned char derivator[DERIVATOR_LENGTH];
     get_derivator(test_file_name, derivator, DERIVATOR_LENGTH);
     unsigned char trace_key[CRYPTO_KEY_LENGTH]; // derived key for cipher
-    if (compute_hmac(trace_key, cctx.crypto_key, derivator) == -1){
+    if (compute_hmac(trace_key, cctx.get_crypto_key()/*crypto_key*/, derivator) == -1){
         BOOST_CHECK(false);
     }
 
@@ -111,13 +105,16 @@ BOOST_AUTO_TEST_CASE(TestVerifierCheckFileHash)
         BOOST_CHECK_EQUAL(data_len, res);
     }
 
-    res = crypto_close(cf_struct, hash, cctx.hmac_key);
+    res = crypto_close(cf_struct, hash, cctx.get_hmac_key()/*hmac_key*/);
 
     BOOST_CHECK_EQUAL(0, res);
 
-    BOOST_CHECK_EQUAL(true, check_file_hash_sha256(test_file_name, cctx.hmac_key, sizeof(cctx.hmac_key),
+    unsigned char (&hmac_key)[MD_HASH_LENGTH] = cctx.get_hmac_key();
+    static_assert(sizeof(hmac_key) == MD_HASH_LENGTH, "Invalid hmac key size");
+
+    BOOST_CHECK_EQUAL(true, check_file_hash_sha256(test_file_name, /*cctx.*/hmac_key, sizeof(/*cctx.*/hmac_key),
                                                    hash, HASH_LEN / 2, 4096));
-    BOOST_CHECK_EQUAL(true, check_file_hash_sha256(test_file_name, cctx.hmac_key, sizeof(cctx.hmac_key),
+    BOOST_CHECK_EQUAL(true, check_file_hash_sha256(test_file_name, /*cctx.*/hmac_key, sizeof(/*cctx.*/hmac_key),
                                                    hash + (HASH_LEN / 2), HASH_LEN / 2, 0));
 
     unlink(test_file_name);

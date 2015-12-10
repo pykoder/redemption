@@ -102,6 +102,7 @@ BOOST_AUTO_TEST_CASE(TestConfigFromFile)
     BOOST_CHECK_EQUAL(true,                             ini.get<cfg::globals::enable_osd>());
     BOOST_CHECK_EQUAL(true,                             ini.get<cfg::globals::enable_osd_display_remote_target>());
 
+/*
     BOOST_CHECK_EQUAL(0,                                memcmp(ini.get<cfg::crypto::key0>(),
                                                                "\x00\x01\x02\x03\x04\x05\x06\x07"
                                                                "\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F"
@@ -112,6 +113,7 @@ BOOST_AUTO_TEST_CASE(TestConfigFromFile)
                                                                "\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F"
                                                                "\x10\x11\x12\x13\x14\x15\x16\x17"
                                                                "\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F", 32));
+*/
 
     BOOST_CHECK_EQUAL(0,                                ini.get<cfg::debug::x224>());
     BOOST_CHECK_EQUAL(0,                                ini.get<cfg::debug::mcs>());
@@ -333,6 +335,7 @@ BOOST_AUTO_TEST_CASE(TestConfigDefaultEmpty)
     BOOST_CHECK_EQUAL(true,                             ini.get<cfg::globals::enable_osd>());
     BOOST_CHECK_EQUAL(true,                             ini.get<cfg::globals::enable_osd_display_remote_target>());
 
+/*
     BOOST_CHECK_EQUAL(0,                                memcmp(ini.get<cfg::crypto::key0>(),
                                                                "\x00\x01\x02\x03\x04\x05\x06\x07"
                                                                "\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F"
@@ -343,6 +346,7 @@ BOOST_AUTO_TEST_CASE(TestConfigDefaultEmpty)
                                                                "\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F"
                                                                "\x10\x11\x12\x13\x14\x15\x16\x17"
                                                                "\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F", 32));
+*/
 
     BOOST_CHECK_EQUAL(0,                                ini.get<cfg::debug::x224>());
     BOOST_CHECK_EQUAL(0,                                ini.get<cfg::debug::mcs>());
@@ -568,6 +572,7 @@ BOOST_AUTO_TEST_CASE(TestConfigDefault)
     BOOST_CHECK_EQUAL(true,                             ini.get<cfg::globals::enable_osd>());
     BOOST_CHECK_EQUAL(true,                             ini.get<cfg::globals::enable_osd_display_remote_target>());
 
+/*
     BOOST_CHECK_EQUAL(0,                                memcmp(ini.get<cfg::crypto::key0>(),
                                                                "\x00\x01\x02\x03\x04\x05\x06\x07"
                                                                "\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F"
@@ -578,6 +583,7 @@ BOOST_AUTO_TEST_CASE(TestConfigDefault)
                                                                "\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F"
                                                                "\x10\x11\x12\x13\x14\x15\x16\x17"
                                                                "\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F", 32));
+*/
 
     BOOST_CHECK_EQUAL(0,                                ini.get<cfg::debug::x224>());
     BOOST_CHECK_EQUAL(0,                                ini.get<cfg::debug::mcs>());
@@ -805,6 +811,7 @@ BOOST_AUTO_TEST_CASE(TestConfig1)
     BOOST_CHECK_EQUAL(false,                            ini.get<cfg::globals::enable_osd>());
     BOOST_CHECK_EQUAL(false,                            ini.get<cfg::globals::enable_osd_display_remote_target>());
 
+/*
     BOOST_CHECK_EQUAL(0,                                memcmp(ini.get<cfg::crypto::key0>(),
                                                                "\x00\x11\x22\x33\x44\x55\x66\x77"
                                                                "\x88\x99\xAA\xBB\xCC\xDD\xEE\xFF"
@@ -815,6 +822,7 @@ BOOST_AUTO_TEST_CASE(TestConfig1)
                                                                "\x77\x66\x55\x44\x33\x22\x11\x00"
                                                                "\xFF\xEE\xDD\xCC\xBB\xAA\x99\x88"
                                                                "\x77\x66\x55\x44\x33\x22\x11\x00", 32));
+*/
 
     BOOST_CHECK_EQUAL(0,                                ini.get<cfg::debug::x224>());
     BOOST_CHECK_EQUAL(0,                                ini.get<cfg::debug::mcs>());
@@ -1023,6 +1031,7 @@ BOOST_AUTO_TEST_CASE(TestConfig1bis)
     BOOST_CHECK_EQUAL(true,                             ini.get<cfg::globals::enable_osd>());
     BOOST_CHECK_EQUAL(true,                             ini.get<cfg::globals::enable_osd_display_remote_target>());
 
+/*
     BOOST_CHECK_EQUAL(0,                                memcmp(ini.get<cfg::crypto::key0>(),
                                                                "\x00\x01\x02\x03\x04\x05\x06\x07"
                                                                "\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F"
@@ -1033,6 +1042,7 @@ BOOST_AUTO_TEST_CASE(TestConfig1bis)
                                                                "\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F"
                                                                "\x10\x11\x12\x13\x14\x15\x16\x17"
                                                                "\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F", 32));
+*/
 
     BOOST_CHECK_EQUAL(0,                                ini.get<cfg::debug::x224>());
     BOOST_CHECK_EQUAL(0,                                ini.get<cfg::debug::mcs>());

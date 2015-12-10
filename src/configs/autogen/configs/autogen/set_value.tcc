@@ -58,19 +58,6 @@ inline void Inifile::set_value(const char * context, const char * key, const cha
             LOG(LOG_ERR, "unknown parameter %s in section [%s]", key, context);
         }
     }
-    else if (0 == strcmp(context, "crypto")) {
-        if (0) {}
-        else if (0 == strcmp(key, "key0")) {
-            ::configs::parse(static_cast<cfg::crypto::key0&>(this->variables).value, value);
-        }
-        else if (0 == strcmp(key, "key1")) {
-            ::configs::parse(static_cast<cfg::crypto::key1&>(this->variables).value, value);
-        }
-
-        else if (static_cast<cfg::debug::config>(this->variables).value) {
-            LOG(LOG_ERR, "unknown parameter %s in section [%s]", key, context);
-        }
-    }
     else if (0 == strcmp(context, "debug")) {
         if (0) {}
         else if (0 == strcmp(key, "x224")) {

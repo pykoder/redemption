@@ -17,6 +17,7 @@ int main(int argc, char ** argv) {
       , "ReDemPtion VERifier " VERSION ".\n"
         "Copyright (C) Wallix 2010-2015.\n"
         "Christophe Grosjean, Raphael Zhou."
+/*
       , [](CryptoContext & cctx) {
             cfg::crypto::key0 key0;
             cfg::crypto::key1 key1;
@@ -24,5 +25,6 @@ int main(int argc, char ** argv) {
             memcpy(cctx.hmac_key,   key1.value, sizeof(cctx.hmac_key  ));
             return 0;
         }
+*/
     );
 }

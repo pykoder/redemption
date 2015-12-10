@@ -21,7 +21,13 @@ BOOST_AUTO_TEST_CASE(TestCryptoInmetaSequenceTransport)
         }
     }
 
-    CryptoContext cctx;
+    CryptoContext cctx(
+            "\x00\x01\x02\x03\x04\x05\x06\x07"
+            "\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F"
+            "\x10\x11\x12\x13\x14\x15\x16\x17"
+            "\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F"
+        );
+/*
     memset(&cctx, 0, sizeof(cctx));
     memcpy(cctx.crypto_key,
        "\x00\x01\x02\x03\x04\x05\x06\x07"
@@ -29,6 +35,7 @@ BOOST_AUTO_TEST_CASE(TestCryptoInmetaSequenceTransport)
        "\x10\x11\x12\x13\x14\x15\x16\x17"
        "\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F",
        CRYPTO_KEY_LENGTH);
+*/
 
     {
         struct timeval tv;
@@ -81,7 +88,13 @@ BOOST_AUTO_TEST_CASE(TestCryptoInmetaSequenceTransport)
 
 BOOST_AUTO_TEST_CASE(CryptoTestInMetaSequenceTransport2)
 {
-    CryptoContext cctx;
+    CryptoContext cctx(
+            "\x00\x01\x02\x03\x04\x05\x06\x07"
+            "\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F"
+            "\x10\x11\x12\x13\x14\x15\x16\x17"
+            "\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F"
+        );
+/*
     memset(&cctx, 0, sizeof(cctx));
     memcpy(cctx.crypto_key,
        "\x00\x01\x02\x03\x04\x05\x06\x07"
@@ -89,6 +102,7 @@ BOOST_AUTO_TEST_CASE(CryptoTestInMetaSequenceTransport2)
        "\x10\x11\x12\x13\x14\x15\x16\x17"
        "\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F",
        CRYPTO_KEY_LENGTH);
+*/
 
     try {
         CryptoInMetaSequenceTransport(&cctx, "TESTOFSXXX", ".mwrm");

@@ -99,6 +99,7 @@ public:
     , pnc_ptr_cache(nullptr)
     , pnc(nullptr)
     , drawable(nullptr)
+    , crypto_ctx(ini.get<cfg::context::crypto_key>())
     , gd(nullptr)
     , last_now(now)
     , last_x(width / 2)
@@ -134,9 +135,11 @@ public:
                 LOG(LOG_ERR, "Failed to create directory: \"%s\"", hash_path);
             }
 
+/*
             memset(&this->crypto_ctx, 0, sizeof(this->crypto_ctx));
             memcpy(this->crypto_ctx.crypto_key, ini.get<cfg::crypto::key0>(), sizeof(this->crypto_ctx.crypto_key));
             memcpy(this->crypto_ctx.hmac_key,   ini.get<cfg::crypto::key1>(), sizeof(this->crypto_ctx.hmac_key  ));
+*/
 
             TODO("there should only be one outmeta, not two. Capture code should not really care if file is encrypted or not."
                  "Here is not the right level to manage anything related to encryption.")

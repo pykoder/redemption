@@ -39,8 +39,9 @@ using checksum_buf_base = transbuf::ochecksum_buf<transbuf::null_buf>;
 struct checksum_buf : CryptoContext, checksum_buf_base {
     template<std::size_t N>
     checksum_buf(char const (&crypto_key)[N])
-    : checksum_buf_base([&]{
-        auto & hmac_key = this->CryptoContext::hmac_key;
+    : CryptoContext(crypto_key)
+    , checksum_buf_base([&]{
+        auto & hmac_key = this->CryptoContext::get_hmac_key()/*hmac_key*/;
         static_assert(N-1 <= sizeof(hmac_key), "");
         memcpy(hmac_key, crypto_key, N-1);
         memset(hmac_key + N - 1, 0, sizeof(hmac_key) - (N - 1));
