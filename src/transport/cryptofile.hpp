@@ -13,7 +13,7 @@
 #include "cryptofile.h"
 
 struct CryptoContext {
-private:
+protected:
     unsigned char hmac_key[HMAC_KEY_LENGTH];
     unsigned char crypto_key[CRYPTO_KEY_LENGTH];
 
