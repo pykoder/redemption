@@ -271,8 +271,8 @@ project redemption
     <toolset>gcc-6.0:$(CXXFLAGS-GCC-6)
     <toolset>gcc-6.1:$(CXXFLAGS-GCC-6)
 
-    <cxxflags>-fpie
-
+#    <cxxflags>-fpie
+    <cxxflags>-fPIC
 
     <define>_FILE_OFFSET_BITS=64
     <define>_LARGEFILE64_SOURCE
@@ -317,10 +317,6 @@ install install-etc-themes
 
 lib libboost_unit_test : : <name>boost_unit_test_framework <link>shared ;
 lib openssl : : <name>ssl <link>shared ;
-# lib X11 : : <name>X11 <link>shared ;
-# lib Xfixes : : <name>Xfixes <link>static ;
-# lib pthread : : <name>pthread <link>shared ;
-# lib pam : : <name>pam <link>static ;
 
 lib krb5 : : <name>krb5 <link>shared ;
 lib gssglue : : <name>gssglue <link>shared ;
@@ -328,20 +324,14 @@ lib gssglue : : <name>gssglue <link>shared ;
 lib crypto : : <name>crypto <link>static ;
 lib z : : <name>z <link>static ;
 lib snappy : : <name>snappy <link>shared ;
-# lib lzma : : <name>lzma <link>shared ;
 lib dl : : <name>dl <link>shared ;
-
-# lib lcms : : <name>lcms <link>shared ;
-
-# lib tiff : : <name>tiff <link>static ;
-# lib freetype : : <name>freetype <link>static ;
-# lib jpeg : : <name>jpeg <link>static ;
-# lib Xext : : <name>Xext <link>static ;
 
 lib libpng : : <name>png <link>static ;
 alias png : libpng z ;
 
-# lib icuuc : : <name>icuuc ;
+lib dlcrypto : : <name>crypto <link>shared ;
+lib dlz : : <name>z <link>shared ;
+lib dlpng : : <name>png <link>shared ;
 
 
 obj mainloop : src/core/mainloop.cpp ;
@@ -408,12 +398,10 @@ exe rdpproxy
 
         openssl
         crypto
-        z
         dl
         png
 
         snappy
-#        lzma
 
         krb5
         gssglue
@@ -422,61 +410,129 @@ exe rdpproxy
         $(EXE_DEPENDENCIES)
     ;
 
+obj recorder_main : src/main/recorder_main.cpp ;
+
 exe redrec
     :
         src/main/recorder.cpp
+#        recorder_main
+        libredrec
+#        bitmap
+#        program_options
+
+#        cryptofile
+
+#        openssl
+#        crypto
+#        png
+#        dll
+
+#        snappy
+    :
+#         <link>static
+        $(EXE_DEPENDENCIES)
+    ;
+
+lib libredrec
+    :
+        recorder_main
+
         bitmap
         program_options
 
-        cryptofile
+        src/transport/cryptofile.cpp
 
         openssl
-        crypto
-        png
-        z
+        dlcrypto
+        dlpng
+        dlz
         dl
 
         snappy
-#        lzma
     :
-#         <link>static
+        <link>shared
         $(EXE_DEPENDENCIES)
     ;
 
 exe reddec
     :
         src/main/decrypter.cpp
+#        src/main/decrypter_main.cpp
+        libreddec
+#        program_options
+
+#        cryptofile
+
+#        openssl
+#        crypto
+#        z
+#        dl
+
+#        snappy
+    :
+#         <link>static
+        $(EXE_DEPENDENCIES)
+    ;
+
+obj decrypter_main : src/main/decrypter_main.cpp ;
+
+lib libreddec
+    :
+        decrypter_main
         program_options
 
         cryptofile
 
         openssl
-        crypto
-        z
+        dlcrypto
+        dlz
         dl
 
         snappy
     :
-#         <link>static
+        <link>shared
         $(EXE_DEPENDENCIES)
     ;
 
 exe redver
     :
         src/main/verifier.cpp
+#        src/main/verifier_main.cpp
+        libredver
+#        program_options
+
+#        cryptofile
+#        ccryptofile
+
+#        openssl
+#        crypto
+#        z
+#        dl
+
+#        snappy
+    :
+#         <link>static
+        $(EXE_DEPENDENCIES)
+    ;
+
+obj verifier_main : src/main/verifier_main.cpp ;
+
+lib libredver
+    :
+        verifier_main
         program_options
 
         cryptofile
         ccryptofile
 
         openssl
-        crypto
-        z
+        dlcrypto
+        dlz
         dl
 
         snappy
     :
-#         <link>static
+        <link>shared
         $(EXE_DEPENDENCIES)
     ;
 
@@ -495,7 +551,6 @@ exe rdptproxy
         dl
 
         snappy
-#        lzma
 
         krb5
         gssglue

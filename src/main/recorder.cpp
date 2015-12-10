@@ -22,15 +22,10 @@
  *
  */
 
+#include <signal.h>
+
 //#define LOGPRINT
-#include "version.hpp"
-
-#include "capture.hpp"
-
-#include "apps/app_recorder.hpp"
-#include "program_options/program_options.hpp"
-
-namespace po = program_options;
+#include "log.hpp"
 
 bool program_requested_to_shutdown = false;
 
@@ -54,43 +49,11 @@ void init_signals(void)
     sigaction(SIGTERM, &sa, nullptr);
 }
 
+extern "C" int recorder_main(int argc, char** argv, bool & program_requested_to_shutdown);
+
 int main(int argc, char** argv)
 {
     init_signals();
 
-    struct CaptureMaker {
-        Capture capture;
-
-        CaptureMaker( const timeval & now, uint16_t width, uint16_t height, int order_bpp, int capture_bpp
-                    , const char * path, const char * basename, const char * /*extension*/
-                    , Inifile & ini, bool /*clear*/, uint32_t /*verbose*/)
-        : capture( now, width, height, order_bpp
-                 , capture_bpp
-                 , path, path, ini.get<cfg::video::hash_path>(), basename
-                 , false, false, nullptr, ini, true)
-        {}
-    };
-    app_recorder<CaptureMaker>(
-        argc, argv
-      , "ReDemPtion RECorder " VERSION ": An RDP movie converter.\n"
-        "Copyright (C) Wallix 2010-2015.\n"
-        "Christophe Grosjean, Jonathan Poelen and Raphael Zhou."
-      , program_requested_to_shutdown
-      , [](po::options_description const &){}
-      , [](Inifile const & ini, po::variables_map const &, std::string const & output_filename) -> int {
-            if (   output_filename.length()
-                && !(
-                    bool(ini.get<cfg::video::capture_flags>()
-                        & (configs::CaptureFlags::png | configs::CaptureFlags::wrm)
-                    ) | ini.get<cfg::globals::capture_chunk>()
-                )
-            ) {
-                std::cerr << "Missing target format : need --png or --wrm\n" << std::endl;
-                return -1;
-            }
-            return 0;
-      }
-//      , [](cfg::crypto::key0::type const &, cfg::crypto::key1::type const &) { return 0; }
-      , [](Inifile const &) { return false; }/*has_extra_capture*/
-    );
+    return recorder_main(argc, argv, program_requested_to_shutdown);
 }
