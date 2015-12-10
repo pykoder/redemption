@@ -11,6 +11,7 @@
 #include "config.hpp"
 #include "version.hpp"
 
+extern "C" {
 
 int decrypter_main(int argc, char ** argv) {
     return app_decrypter(
@@ -28,4 +29,6 @@ int decrypter_main(int argc, char ** argv) {
         }
 */
     );
+}
+
 }

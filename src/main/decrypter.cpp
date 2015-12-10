@@ -6,7 +6,7 @@
    redrec video converter program
 */
 
-extern int decrypter_main(int argc, char ** argv);
+extern "C" int decrypter_main(int argc, char ** argv);
 
 int main(int argc, char ** argv) {
     return decrypter_main(argc, argv);

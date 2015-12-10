@@ -6,7 +6,7 @@
    redver video verifier program
 */
 
-int verifier_main(int argc, char ** argv);
+extern "C" int verifier_main(int argc, char ** argv);
 
 int main(int argc, char ** argv) {
     return verifier_main(argc, argv);

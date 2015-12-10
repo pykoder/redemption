@@ -11,6 +11,8 @@
 #include "config.hpp"
 #include "version.hpp"
 
+extern "C" {
+
 int verifier_main(int argc, char ** argv) {
     return app_verifier(
         argc, argv
@@ -27,4 +29,6 @@ int verifier_main(int argc, char ** argv) {
         }
 */
     );
+}
+
 }
