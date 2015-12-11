@@ -37,9 +37,15 @@ namespace detail
         template<class Buf>
         int open(Buf & buf, CryptoContext & cctx, char const * filename) {
             unsigned char trace_key[CRYPTO_KEY_LENGTH]; // derived key for cipher
+/*
             unsigned char derivator[DERIVATOR_LENGTH];
             get_derivator(filename, derivator, DERIVATOR_LENGTH);
-            if (-1 == compute_hmac(trace_key, cctx.get_crypto_key()/*crypto_key*/, derivator)) {
+            if (-1 == compute_hmac(trace_key, cctx.crypto_key, derivator)) {
+                return -1;
+            }
+*/
+            const unsigned int version = 0;
+            if (!cctx.derive_crypto_key(trace_key, filename, version)) {
                 return -1;
             }
 

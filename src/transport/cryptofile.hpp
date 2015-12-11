@@ -62,6 +62,16 @@ public:
         REDASSERT(this->crypto_key_initialize);
         return this->crypto_key;
     }
+
+    bool derive_crypto_key(unsigned char (&target_crypto_key)[CRYPTO_KEY_LENGTH],
+            char const * filename, unsigned int version) const {
+        REDASSERT(this->crypto_key_initialize);
+
+        unsigned char derivator[DERIVATOR_LENGTH];
+        get_derivator(filename, derivator, DERIVATOR_LENGTH);
+
+        return (-1 < compute_hmac(target_crypto_key, this->crypto_key, derivator));
+    }
 };
 
 #endif  // #define WABCRYPTOFILE_HPP

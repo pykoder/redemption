@@ -28,11 +28,17 @@
 namespace transbuf {
     namespace detail {
         template<class Buf>
-        int init_trace_key(Buf & buf, CryptoContext * ctx, const char * filename, mode_t mode, unsigned char * trace_key)
+        int init_trace_key(Buf & buf, CryptoContext * ctx, const char * filename, mode_t mode, unsigned char (&trace_key)[CRYPTO_KEY_LENGTH])
         {
+/*
             unsigned char derivator[DERIVATOR_LENGTH];
             get_derivator(filename, derivator, DERIVATOR_LENGTH);
-            if (-1 == compute_hmac(trace_key, ctx->get_crypto_key()/*crypto_key*/, derivator)) {
+            if (-1 == compute_hmac(trace_key, ctx->crypto_key, derivator)) {
+                return -1;
+            }
+*/
+            const unsigned int version = 0;
+            if (!ctx->derive_crypto_key(trace_key, filename, version)) {
                 return -1;
             }
 
