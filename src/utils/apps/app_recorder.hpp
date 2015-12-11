@@ -467,7 +467,7 @@ int recompress_or_record( bool & program_requested_to_shutdown
     TODO("also check if it contains any wrm at all and at wich one we should start depending on input time")
     TODO("if start and stop time are outside wrm, users should also be warned")
 
-    CryptoContext cctx(true);
+    CryptoContext cctx;
 /*
     memset(&cctx, 0, sizeof(cctx));
     memcpy(cctx.crypto_key, ini.get<cfg::crypto::key0>(), sizeof(cctx.crypto_key));

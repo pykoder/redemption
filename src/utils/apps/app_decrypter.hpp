@@ -95,7 +95,7 @@ int app_decrypter(int argc, char ** argv, const char * copyright_notice/*, F cry
         return 0;
     }
 
-    CryptoContext cctx(true);
+    CryptoContext cctx;
 /*
     memset(&cctx, 0, sizeof(cctx));
     if (int status = crypto_context_initializer(cctx)) {

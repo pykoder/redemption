@@ -20,7 +20,15 @@ protected:
     bool crypto_key_initialize = false;
 
 public:
-    CryptoContext(void const * crypto_key) {
+    CryptoContext(void const * crypto_key, std::size_t crypto_key_length) {
+        //LOG(LOG_INFO,
+        //    "crypto_key_length=%d, sizeof(this->hmac_key)=%d sizeof(this->crypto_key)=%d",
+        //    int(crypto_key_length), int(sizeof(this->hmac_key)),
+        //    int(sizeof(this->crypto_key)));
+
+        REDASSERT(crypto_key_length == sizeof(this->hmac_key));
+        REDASSERT(crypto_key_length == sizeof(this->crypto_key));
+
         memset(this->hmac_key, 0, sizeof(this->hmac_key));
         memset(this->crypto_key, 0, sizeof(this->crypto_key));
 
@@ -30,7 +38,7 @@ public:
         this->crypto_key_initialize = true;
     }
 
-    CryptoContext(bool dummy) {
+    CryptoContext() {
         memset(this->hmac_key, 0, sizeof(this->hmac_key));
         memset(this->crypto_key, 0, sizeof(this->crypto_key));
     }

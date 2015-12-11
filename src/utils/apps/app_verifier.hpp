@@ -467,7 +467,7 @@ int app_verifier(int argc, char ** argv, const char * copyright_notice/*, F cryp
         exit(-1);
     }
 
-    CryptoContext cctx(true);
+    CryptoContext cctx;
 //    memset(&cctx, 0, sizeof(cctx));
     if (infile_is_encrypted) {
 /*

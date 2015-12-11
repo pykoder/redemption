@@ -37,7 +37,8 @@ BOOST_AUTO_TEST_CASE(TestOutmetaTransportWithSum)
             "1234567890"
             "1234567890"
             "1234567890"
-            "12"
+            "12",
+            32
         );
 /*
     memset(&cctx, 0, sizeof(cctx));

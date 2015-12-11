@@ -99,7 +99,7 @@ public:
     , pnc_ptr_cache(nullptr)
     , pnc(nullptr)
     , drawable(nullptr)
-    , crypto_ctx(ini.get<cfg::context::crypto_key>())
+    , crypto_ctx(ini.get<cfg::context::crypto_key>(), ini.get<cfg::context::crypto_key>().max_size())
     , gd(nullptr)
     , last_now(now)
     , last_x(width / 2)
