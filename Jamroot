@@ -415,21 +415,22 @@ obj recorder_main : src/main/recorder_main.cpp ;
 exe redrec
     :
         src/main/recorder.cpp
-#        recorder_main
-        libredrec
-#        bitmap
-#        program_options
+        recorder_main
 
-#        cryptofile
+        bitmap
+        program_options
 
-#        openssl
-#        crypto
-#        png
-#        dll
+        src/transport/cryptofile.cpp
 
-#        snappy
+        openssl
+        dlcrypto
+        dlpng
+        dlz
+        dl
+
+        snappy
     :
-#         <link>static
+#        <link>static
         $(EXE_DEPENDENCIES)
     ;
 
@@ -450,27 +451,26 @@ lib libredrec
 
         snappy
     :
-        <link>shared
+#        <link>shared
         $(EXE_DEPENDENCIES)
     ;
 
 exe reddec
     :
         src/main/decrypter.cpp
-#        src/main/decrypter_main.cpp
-        libreddec
-#        program_options
+        decrypter_main
+        program_options
 
-#        cryptofile
+        cryptofile
 
-#        openssl
-#        crypto
-#        z
-#        dl
+        openssl
+        dlcrypto
+        dlz
+        dl
 
-#        snappy
+        snappy
     :
-#         <link>static
+#        <link>static
         $(EXE_DEPENDENCIES)
     ;
 
@@ -490,28 +490,27 @@ lib libreddec
 
         snappy
     :
-        <link>shared
+#        <link>shared
         $(EXE_DEPENDENCIES)
     ;
 
 exe redver
     :
         src/main/verifier.cpp
-#        src/main/verifier_main.cpp
-        libredver
-#        program_options
+        verifier_main
+        program_options
 
-#        cryptofile
-#        ccryptofile
+        cryptofile
+        ccryptofile
 
-#        openssl
-#        crypto
-#        z
-#        dl
+        openssl
+        dlcrypto
+        dlz
+        dl
 
-#        snappy
+        snappy
     :
-#         <link>static
+#        <link>static
         $(EXE_DEPENDENCIES)
     ;
 
@@ -532,7 +531,7 @@ lib libredver
 
         snappy
     :
-        <link>shared
+#        <link>shared
         $(EXE_DEPENDENCIES)
     ;
 
@@ -555,7 +554,7 @@ exe rdptproxy
         krb5
         gssglue
     :
-#         <link>static
+#        <link>static
         $(EXE_DEPENDENCIES)
     ;
 
@@ -577,7 +576,7 @@ exe rdptanalyzer
         krb5
         gssglue
     :
-#         <link>static
+#        <link>static
         $(EXE_DEPENDENCIES)
     ;
 

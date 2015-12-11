@@ -335,7 +335,7 @@ int check_encrypted_or_checksumed_file(std::string const & input_filename,
         }
 
         if (hash_ok == false) {
-            exit(-1);
+            return -1;
         }
     }
 
@@ -348,7 +348,7 @@ int check_encrypted_or_checksumed_file(std::string const & input_filename,
             (quick_check ? QUICK_CHECK_LENGTH : 0), args ...)) {
         std::cerr << "File \"" << fullfilename << "\" is invalid!" << std::endl << std::endl;
 
-        exit(-1);
+        return -1;
     }
 
     std::cout << "No error detected during the data verification." << std::endl << std::endl;
@@ -393,12 +393,12 @@ int app_verifier(int argc, char ** argv, const char * copyright_notice/*, F cryp
         std::cout << copyright_notice;
         std::cout << "Usage: redver [options]\n\n";
         std::cout << desc << std::endl;
-        exit(0);
+        return 0;
     }
 
     if (options.count("version") > 0) {
         std::cout << copyright_notice;
-        exit(0);
+        return 0;
     }
 
     if (options.count("quick") > 0) {
@@ -407,17 +407,17 @@ int app_verifier(int argc, char ** argv, const char * copyright_notice/*, F cryp
 
     if (hash_path.c_str()[0] == 0) {
         std::cerr << "Missing hash-path : use -h path\n\n";
-        exit(-1);
+        return -1;
     }
 
     if (mwrm_path.c_str()[0] == 0) {
         std::cerr << "Missing mwrm-path : use -m path\n\n";
-        exit(-1);
+        return -1;
     }
 
     if (input_filename.c_str()[0] == 0) {
         std::cerr << "Missing input mwrm file name : use -i filename\n\n";
-        exit(-1);
+        return -1;
     }
 
     {
@@ -464,7 +464,7 @@ int app_verifier(int argc, char ** argv, const char * copyright_notice/*, F cryp
     }
     else {
         std::cerr << "Input file is absent.\n";
-        exit(-1);
+        return -1;
     }
 
     CryptoContext cctx;
