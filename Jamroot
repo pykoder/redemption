@@ -287,7 +287,7 @@ project redemption
 explicit install instexe install-bin install-etc install-etc-themes install-share check_coverage exe ;
 
 alias instexe : install-bin ;
-alias install : install-bin install-etc install-etc-themes install-share ;
+alias install : install-bin install-etc install-etc-themes install-share install-tools ;
 alias exe     : rdpproxy redrec reddec redver rdptproxy rdptanalyzer rdpclient ;
 
 
@@ -296,6 +296,12 @@ install install-bin
     : <install-type>EXE <install-dependencies>on
     : <location>$(INSTALLDIR)/usr/local/bin
     ;
+
+install install-tools
+    : [ glob tools/rdpcert ]
+    : <location>$(INSTALLDIR)/usr/local/bin
+    ;
+
 
 install install-share
     : [ glob sys/share/rdpproxy/[^.k]* ]
@@ -515,6 +521,14 @@ exe redver
     ;
 
 obj verifier_main : src/main/verifier_main.cpp ;
+
+lib libxxx
+    :
+       src/utils/libxxx.cpp
+    :
+        <link>shared
+    ;
+       
 
 lib libredver
     :

@@ -16,11 +16,16 @@ struct CryptoContext {
 protected:
     unsigned char hmac_key[HMAC_KEY_LENGTH];
     unsigned char crypto_key[CRYPTO_KEY_LENGTH];
+    
+     void (* initialize_crypto_key)();
 
-    bool crypto_key_initialize = false;
+    bool crypto_key_initialize;
 
 public:
-    CryptoContext(void const * crypto_key, std::size_t crypto_key_length) {
+    CryptoContext(void const * crypto_key, std::size_t crypto_key_length) 
+       : initialize_crypto_key(nullptr),
+         crypto_key_initialize(true)
+        {
         //LOG(LOG_INFO,
         //    "crypto_key_length=%d, sizeof(this->hmac_key)=%d sizeof(this->crypto_key)=%d",
         //    int(crypto_key_length), int(sizeof(this->hmac_key)),
@@ -38,39 +43,76 @@ public:
         this->crypto_key_initialize = true;
     }
 
-    CryptoContext() {
+    CryptoContext() 
+       : initialize_crypto_key(nullptr), 
+        crypto_key_initialize(false)    
+    {
+        memset(this->hmac_key, 0, sizeof(this->hmac_key));
+        memset(this->crypto_key, 0, sizeof(this->crypto_key));
+    }
+
+    CryptoContext(void (* initialize_crypto_key)()) 
+       : initialize_crypto_key(initialize_crypto_key), 
+        crypto_key_initialize(false)    
+    {
         memset(this->hmac_key, 0, sizeof(this->hmac_key));
         memset(this->crypto_key, 0, sizeof(this->crypto_key));
     }
 
     void get_hmac_key(unsigned char (&target_hmac_key)[HMAC_KEY_LENGTH]) const {
-        REDASSERT(this->crypto_key_initialize);
+        if (!this->crypto_key_initialize 
+            && this->initialize_crypto_key){
+            this->initialize_crypto_key();
+        }
         memcpy(target_hmac_key, this->hmac_key, sizeof(target_hmac_key));
     }
 
     unsigned char (&get_hmac_key())[HMAC_KEY_LENGTH] {
-        REDASSERT(this->crypto_key_initialize);
+        if (!this->crypto_key_initialize 
+            && this->initialize_crypto_key){
+            this->initialize_crypto_key();
+        }
         return this->hmac_key;
     }
 
     void get_crypto_key(unsigned char (&target_crypto_key)[CRYPTO_KEY_LENGTH]) const {
-        REDASSERT(this->crypto_key_initialize);
+        if (!this->crypto_key_initialize 
+            && this->initialize_crypto_key){
+            this->initialize_crypto_key();
+        }
         memcpy(target_crypto_key, this->crypto_key, sizeof(target_crypto_key));
     }
 
     unsigned char (&get_crypto_key())[CRYPTO_KEY_LENGTH] {
-        REDASSERT(this->crypto_key_initialize);
+        if (!this->crypto_key_initialize 
+            && this->initialize_crypto_key){
+            this->initialize_crypto_key();
+        }
         return this->crypto_key;
     }
 
+    bool get_target_crypto_key(
+        unsigned char (&target_crypto_key)[CRYPTO_KEY_LENGTH], 
+        char const * filename)
+    {
+        unsigned char tmp_derivation[DERIVATOR_LENGTH + CRYPTO_KEY_LENGTH] = {}; // derivator + masterkey
+        get_derivator(filename, tmp_derivation, DERIVATOR_LENGTH);
+        memcpy(tmp_derivation + DERIVATOR_LENGTH, this->crypto_key, CRYPTO_KEY_LENGTH);
+        
+        unsigned char derivated[SHA256_DIGEST_LENGTH  + CRYPTO_KEY_LENGTH] = {}; // really should be MAX, but + will do
+
+        if (SHA256(tmp_derivation, CRYPTO_KEY_LENGTH + DERIVATOR_LENGTH, derivated) == nullptr){
+            std::printf("[CRYPTO_ERROR][%d]: Could not derivate hash crypto key, SHA256!\n", getpid());
+            return false;
+        }
+        memcpy(target_crypto_key, derivated, HMAC_KEY_LENGTH);
+        return true;
+            
+    }
+
     bool derive_crypto_key(unsigned char (&target_crypto_key)[CRYPTO_KEY_LENGTH],
-            char const * filename, unsigned int version) const {
-        REDASSERT(this->crypto_key_initialize);
-
-        unsigned char derivator[DERIVATOR_LENGTH];
-        get_derivator(filename, derivator, DERIVATOR_LENGTH);
-
-        return (-1 < compute_hmac(target_crypto_key, this->crypto_key, derivator));
+            char const * filename, unsigned int version) {
+        return this->get_target_crypto_key(target_crypto_key, filename);
     }
 };
 
