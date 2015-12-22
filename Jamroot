@@ -127,6 +127,15 @@ constant CXXFLAGS-COMMON :
     <cxxflags>-Woverlength-strings
     <cxxflags>-Warray-bounds
 
+    <cflags>-fPIC
+    <cflags>-fstack-protector
+    <cflags>-D_LARGEFILE_SOURCE
+    <cflags>-D_FORTIFY_SOURCE=2
+    <cflags>-D_LARGEFILE_SOURCE
+    #<cflags>-fdump-rtl-expand
+    <linkflags>-static-libstdc++
+    #<cxxflags>-std=c++11
+
 #     <toolset>clang:<cxxflags>-Weverything
 #     <toolset>clang:<cxxflags>-Wno-c++98-compat
     <toolset>clang:<cxxflags>-Wno-mismatched-tags
@@ -325,12 +334,19 @@ lib openssl : : <name>ssl <link>shared ;
 
 lib krb5 : : <name>krb5 <link>shared ;
 lib gssglue : : <name>gssglue <link>shared ;
+lib gssapi_krb5 : : <name>gssapi_krb5 <link>shared ;
 
-lib crypto : : <name>crypto <link>static ;
-lib z : : <name>z <link>static ;
+constant LIBCRYPTO_PATH : [ SHELL "/usr/bin/find /usr/lib/ /lib/ -maxdepth 2 -name 'libcrypto.so.1.0.0' | head -1 | head -c-1" ] ;
+
+# lib crypto : : <file>/usr/lib/libcrypto.so.1.0.0 <link>shared ;
+lib crypto : : <file>$(LIBCRYPTO_PATH) <link>shared ;
+lib dl : : <name>dl <link>shared ;
+lib z : : <name>z <link>shared ;
+lib rt : : <name>rt <link>shared ;
+
+#lib crypto : : <name>crypto <link>shared ;
 lib snappy : : <name>snappy <link>shared ;
 # lib lzma : : <name>lzma <link>shared ;
-lib dl : : <name>dl <link>shared ;
 
 # lib lcms : : <name>lcms <link>shared ;
 
@@ -938,5 +954,110 @@ exe test_rdp_Qt :
     libboost_unit_test 
     :
     <include>/usr/include/qt4
+    ;
+
+
+
+#project sashimi
+#    : requirements
+#    <toolset>gcc:<cxxflags>-Wno-cpp
+#    <include>sashimi/src
+#    <include>sashimi/src/redemption
+#    <include>sashimi/src/redemption/core
+#    <include>sashimi/src/redemption/utils
+#    <include>sashimi/src/redemption/headers
+##    <include>/usr/include
+#    <include>../openssl-1.0.1g/include
+#    <cflags>-g
+#    <cflags>-Wall
+#    <cflags>-fPIC
+#    <cflags>-fstack-protector
+#    <cflags>-D_LARGEFILE_SOURCE
+#    <cflags>-D_FORTIFY_SOURCE=2
+#    <cflags>-D_LARGEFILE_SOURCE
+#    #<cflags>-fdump-rtl-expand
+#    <linkflags>-static-libstdc++
+#    <cxxflags>-std=c++11
+#    : default-build release
+#;
+
+explicit install-sashimi local-install-sashimi ;
+
+install install-sashimi
+    : sashimi
+    : <location>debian/sashimi/usr/lib
+    ;
+
+install local-install-sashimi
+    : sashimi
+    : <location>/usr/lib
+    ;
+
+obj sashimi_error : src/sashimi/src/error.cpp     :
+    ;
+
+obj sashimi_pki : src/sashimi/src/pki.cpp     :
+    <include>src/sashimi/src
+    ;
+
+obj sashimi_channels : src/sashimi/src/channels.cpp     :
+    <include>src/sashimi/src
+    ;
+
+obj sashimi_log : src/sashimi/src/log.cpp     :
+    <include>src/sashimi/src
+    ;
+
+obj sashimi_sftp : src/sashimi/src/sftp.cpp     :
+    <include>src/sashimi/src
+    ;
+
+obj sashimi_libssh : src/sashimi/src/libssh.cpp     :
+    <include>src/sashimi/src
+    ;
+
+
+lib sashimi 
+    :
+    sashimi_pki
+    sashimi_channels
+    sashimi_log
+    sashimi_sftp
+    sashimi_libssh
+    sashimi_error
+#    #openssl
+    krb5
+    gssapi_krb5
+    crypto
+    dl
+    z
+    rt
+    :
+    <link>shared
+    :
+    :
+;
+
+##
+## Unit Tests
+##
+
+unit-test test_buffer : 
+    src/sashimi/tests/buffer.cpp 
+    sashimi_error 
+    sashimi_log 
+    libboost_unit_test 
+    :
+    <include>src/sashimi/src
+    ;
+
+unit-test test_crypto : 
+    src/sashimi/tests/test_crypto.cpp 
+    sashimi_error 
+    sashimi_log 
+    crypto
+    libboost_unit_test 
+    :
+    <include>src/sashimi/src
     ;
 
