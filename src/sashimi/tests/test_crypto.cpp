@@ -540,9 +540,9 @@ struct SshPrivateDSAKey {
             }
         };
         std::unique_ptr<BIO, BIO_deleter> mem(BIO_new_mem_buf((void*)b64_key, -1));
-        this->dsa = PEM_read_bio_DSAPrivateKey(mem.get(), NULL, NULL, NULL);
-        if (this->dsa == NULL) {
-            LOG(LOG_INFO, "Parsing private key: %s", ERR_error_string(ERR_get_error(), NULL));
+        this->dsa = PEM_read_bio_DSAPrivateKey(mem.get(), nullptr, nullptr, nullptr);
+        if (this->dsa == nullptr) {
+            LOG(LOG_INFO, "Parsing private key: %s", ERR_error_string(ERR_get_error(), nullptr));
             throw Error(ERR_SSH_PARSE_PRIVATE_DSA_KEY);
         }
     }
@@ -560,9 +560,9 @@ struct SshPrivateRSAKey {
             }
         };
         std::unique_ptr<BIO, BIO_deleter> mem(BIO_new_mem_buf((void*)b64_key, -1));
-        this->dsa = PEM_read_bio_RSAPrivateKey(mem.get(), NULL, NULL, NULL);
-        if (this->dsa == NULL) {
-            LOG(LOG_INFO, "Parsing private key: %s", ERR_error_string(ERR_get_error(), NULL));
+        this->dsa = PEM_read_bio_RSAPrivateKey(mem.get(), nullptr, nullptr, nullptr);
+        if (this->dsa == nullptr) {
+            LOG(LOG_INFO, "Parsing private key: %s", ERR_error_string(ERR_get_error(), nullptr));
             throw Error(ERR_SSH_PARSE_PRIVATE_RSA_KEY);
         }
     }

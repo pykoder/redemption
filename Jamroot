@@ -957,30 +957,6 @@ exe test_rdp_Qt :
     ;
 
 
-
-#project sashimi
-#    : requirements
-#    <toolset>gcc:<cxxflags>-Wno-cpp
-#    <include>sashimi/src
-#    <include>sashimi/src/redemption
-#    <include>sashimi/src/redemption/core
-#    <include>sashimi/src/redemption/utils
-#    <include>sashimi/src/redemption/headers
-##    <include>/usr/include
-#    <include>../openssl-1.0.1g/include
-#    <cflags>-g
-#    <cflags>-Wall
-#    <cflags>-fPIC
-#    <cflags>-fstack-protector
-#    <cflags>-D_LARGEFILE_SOURCE
-#    <cflags>-D_FORTIFY_SOURCE=2
-#    <cflags>-D_LARGEFILE_SOURCE
-#    #<cflags>-fdump-rtl-expand
-#    <linkflags>-static-libstdc++
-#    <cxxflags>-std=c++11
-#    : default-build release
-#;
-
 explicit install-sashimi local-install-sashimi ;
 
 install install-sashimi
@@ -993,27 +969,27 @@ install local-install-sashimi
     : <location>/usr/lib
     ;
 
-obj sashimi_error : src/sashimi/src/error.cpp     :
+obj sashimi_error : src/sashimi/error.cpp     :
     ;
 
-obj sashimi_pki : src/sashimi/src/pki.cpp     :
-    <include>src/sashimi/src
+obj sashimi_pki : src/sashimi/pki.cpp     :
+    <include>src/sashimi
     ;
 
-obj sashimi_channels : src/sashimi/src/channels.cpp     :
-    <include>src/sashimi/src
+obj sashimi_channels : src/sashimi/channels.cpp     :
+    <include>src/sashimi
     ;
 
-obj sashimi_log : src/sashimi/src/log.cpp     :
-    <include>src/sashimi/src
+obj sashimi_log : src/sashimi/log.cpp     :
+    <include>src/sashimi
     ;
 
-obj sashimi_sftp : src/sashimi/src/sftp.cpp     :
-    <include>src/sashimi/src
+obj sashimi_sftp : src/sashimi/sftp.cpp     :
+    <include>src/sashimi
     ;
 
-obj sashimi_libssh : src/sashimi/src/libssh.cpp     :
-    <include>src/sashimi/src
+obj sashimi_libssh : src/sashimi/libssh.cpp     :
+    <include>src/sashimi
     ;
 
 
@@ -1048,7 +1024,7 @@ unit-test test_buffer :
     sashimi_log 
     libboost_unit_test 
     :
-    <include>src/sashimi/src
+    <include>src/sashimi
     ;
 
 unit-test test_crypto : 
@@ -1058,6 +1034,6 @@ unit-test test_crypto :
     crypto
     libboost_unit_test 
     :
-    <include>src/sashimi/src
+    <include>src/sashimi
     ;
 

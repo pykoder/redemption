@@ -26,7 +26,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <zlib.h>
+#include <openssl/pem.h>
+#include <openssl/err.h>
 
+#include "libssh/libssh.h"
+#include "string.hpp"
 #include "openssl_crypto.hpp"
 #include "utils/ssl_calls.hpp"
 #include <arpa/inet.h>
@@ -496,7 +500,7 @@ struct ssh_cipher_struct {
     int alloc_key() 
     {
         this->key = malloc(this->keylen);
-        if (this->key == NULL) {
+        if (this->key == nullptr) {
           return -1;
         }
 
@@ -517,7 +521,7 @@ struct ssh_blowfish_cipher_struct : public ssh_cipher_struct
     int set_encrypt_key(void *key, void *IV)
     {
 //        syslog(LOG_INFO, " ssh_blowfish_cipher_struct::set_encrypt_key");
-      if (this->key == NULL) {
+      if (this->key == nullptr) {
         if (this->alloc_key() < 0) {
           return -1;
         }
@@ -563,7 +567,7 @@ struct ssh_aes128_ctr_cipher_struct : public ssh_cipher_struct
     int set_encrypt_key(void *key, void *IV) 
     {
 //      syslog(LOG_INFO, "ssh_aes128_ctr_cipher_struct::set_encrypt_key");
-        if (this->key == NULL) {
+        if (this->key == nullptr) {
             if (this->alloc_key() < 0) {
               return -1;
             }
@@ -623,7 +627,7 @@ struct ssh_aes192_ctr_cipher_struct : public ssh_cipher_struct
     int set_encrypt_key(void *key, void *IV) 
     {
 //      syslog(LOG_INFO, "ssh_aes192_ctr_cipher_struct::set_encrypt_key");
-        if (this->key == NULL) {
+        if (this->key == nullptr) {
             if (this->alloc_key() < 0) {
               return -1;
             }
@@ -683,7 +687,7 @@ struct ssh_aes256_ctr_cipher_struct : public ssh_cipher_struct
     int set_encrypt_key(void *key, void *IV) 
     {
 //      syslog(LOG_INFO, "ssh_aes256_ctr_cipher_struct::set_encrypt_key");
-        if (this->key == NULL) {
+        if (this->key == nullptr) {
             if (this->alloc_key() < 0) {
                 return -1;
             }
@@ -743,7 +747,7 @@ struct ssh_aes128_cbc_cipher_struct : public ssh_cipher_struct
     int set_encrypt_key(void *key, void *IV) 
     {
 //      syslog(LOG_INFO, "ssh_aes128_cbc_cipher_struct::set_encrypt_key");
-        if (this->key == NULL) {
+        if (this->key == nullptr) {
             if (this->alloc_key() < 0) {
                 return -1;
             }
@@ -761,7 +765,7 @@ struct ssh_aes128_cbc_cipher_struct : public ssh_cipher_struct
 
     int set_decrypt_key(void *key, void *IV) {
 //      syslog(LOG_INFO, "ssh_aes128_cbc_cipher_struct::set_decrypt_key");
-      if (this->key == NULL) {
+      if (this->key == nullptr) {
         if (this->alloc_key() < 0) {
           return -1;
         }
@@ -807,7 +811,7 @@ struct ssh_aes192_cbc_cipher_struct : public ssh_cipher_struct
     int set_encrypt_key(void *key, void *IV) 
     {
 //      syslog(LOG_INFO, "ssh_aes192_cbc_cipher_struct::set_encrypt_key");    
-      if (this->key == NULL) {
+      if (this->key == nullptr) {
         if (this->alloc_key() < 0) {
           return -1;
         }
@@ -824,7 +828,7 @@ struct ssh_aes192_cbc_cipher_struct : public ssh_cipher_struct
 
     int set_decrypt_key(void *key, void *IV) {
 //      syslog(LOG_INFO, "ssh_aes192_cbc_cipher_struct::set_decrypt_key");    
-      if (this->key == NULL) {
+      if (this->key == nullptr) {
         if (this->alloc_key() < 0) {
           return -1;
         }
@@ -869,7 +873,7 @@ struct ssh_aes256_cbc_cipher_struct : public ssh_cipher_struct
     int set_encrypt_key(void *key, void *IV) 
     {
 //      syslog(LOG_INFO, "ssh_aes256_cbc_cipher_struct::set_encrypt_key");        
-      if (this->key == NULL) {
+      if (this->key == nullptr) {
         if (this->alloc_key() < 0) {
           return -1;
         }
@@ -887,7 +891,7 @@ struct ssh_aes256_cbc_cipher_struct : public ssh_cipher_struct
 
     int set_decrypt_key(void *key, void *IV) {
 //      syslog(LOG_INFO, "ssh_aes256_cbc_cipher_struct::set_decrypt_key");        
-      if (this->key == NULL) {
+      if (this->key == nullptr) {
         if (this->alloc_key() < 0) {
           return -1;
         }
@@ -907,9 +911,7 @@ struct ssh_aes256_cbc_cipher_struct : public ssh_cipher_struct
     {
 //      syslog(LOG_INFO, "ssh_aes256_cbc_cipher_struct::cbc_encrypt");        
       AES_cbc_encrypt(
-        in,
-        static_cast<unsigned char *>(out),
-        len, 
+        in, out, len, 
         static_cast<const AES_KEY*>(this->key), 
         static_cast<unsigned char *>(this->IV), 
         AES_ENCRYPT);
@@ -935,7 +937,7 @@ struct ssh_3des_cbc_cipher_struct : public ssh_cipher_struct
     int set_encrypt_key(void *key, void *IV) 
     {
 //        syslog(LOG_INFO, "ssh_3des_cbc_cipher_struct::set_encrypt_key");        
-        if (this->key == NULL) {
+        if (this->key == nullptr) {
             if (this->alloc_key() < 0) {
               return -1;
             }
@@ -987,7 +989,7 @@ struct ssh_3des_cbc_ssh1_cipher_struct : public ssh_cipher_struct
     int set_encrypt_key(void *key, void *IV) 
     {
 //      syslog(LOG_INFO, "ssh_3des_cbc_ssh1_cipher_struct::set_encrypt_key");        
-        if (this->key == NULL) {
+        if (this->key == nullptr) {
             if (this->alloc_key() < 0) {
               return -1;
             }
@@ -1114,17 +1116,17 @@ struct ssh_crypto_struct {
 
         int build_k(BIGNUM * (& k), const SSHString & ecdh_pubkey) {        
           k = BN_new();
-          if (k == NULL) {
+          if (k == nullptr) {
             return -1;
           }
           const EC_GROUP *group = EC_KEY_get0_group(this->privkey);
           EC_POINT * pubkey = EC_POINT_new(group);
-          if (pubkey == NULL) {
+          if (pubkey == nullptr) {
             return -1;
           }
 
           bignum_CTX ctx = bignum_ctx_new();
-          if (ctx == NULL) {
+          if (ctx == nullptr) {
               EC_POINT_clear_free(pubkey);
             return -1;
           }
@@ -1133,7 +1135,7 @@ struct ssh_crypto_struct {
           // TOOD: Check actual size necessary, Elliptic curve are supposed to used smaller keys than
           // other encryption schemes, but if it force dynamic memory allocation purpose is defeated
           uint8_t buffer[4096];
-          int rc = ECDH_compute_key(buffer, len, pubkey, this->privkey, NULL);
+          int rc = ECDH_compute_key(buffer, len, pubkey, this->privkey, nullptr);
           EC_POINT_clear_free(pubkey);
           if (rc <= 0) {
               bignum_ctx_free(ctx);
@@ -1272,7 +1274,7 @@ struct ssh_crypto_struct {
         BN_clear_free(this->y);
         BN_clear_free(this->k);
     
-//        if(this->session_id != NULL){
+//        if(this->session_id != nullptr){
 //            memset(this->session_id, '\0', this->digest_len);
 //            free(this->session_id);
 //            this->session_id = nullptr;
@@ -1685,16 +1687,16 @@ struct ssh_crypto_struct {
         std::vector<uint8_t> out;
         out.reserve(len);
 
-        // TODO: returning NULL below hides actual errors that should be managed
+        // TODO: returning nullptr below hides actual errors that should be managed
         if(len % this->in_cipher->blocksize != 0){
             error.eid = SSH_FATAL;
             snprintf(error.error_buffer, sizeof(error.error_buffer),
                 "Cryptographic functions must be set on at least one blocksize (received %d)",len);
-            return NULL;
+            return nullptr;
         }
 
         if (this->out_cipher->set_encrypt_key(this->encryptkey, this->encryptIV) < 0) {
-            return NULL;
+            return nullptr;
         }
 
         SslHMAC_Sha1 hmac_sha1(this->encryptMAC, SHA_DIGEST_LENGTH);

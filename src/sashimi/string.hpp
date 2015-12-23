@@ -80,7 +80,7 @@ struct SSHString
     {
     }  
 
-    const char * const cstr() const
+    char * cstr() const
     {
         this->data.get()[this->size] = 0;
         return reinterpret_cast<char *>(this->data.get());

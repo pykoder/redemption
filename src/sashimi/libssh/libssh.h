@@ -37,64 +37,7 @@
 #include <stdarg.h>
 #include <syslog.h>
 
-enum {
-    ERROR_NOT_ENOUGH_DATA = 0
-};
-
-struct SSHString
-{
-    uint32_t size;
-    std::unique_ptr<uint8_t[]> data;
-
-    SSHString(uint32_t size) 
-        : size(size)
-        , data(new uint8_t[size+1])
-    {
-    }  
-
-    SSHString(int size) 
-        : size(static_cast<uint32_t>(size))
-        , data(new uint8_t[this->size+1])
-    {
-    }  
-
-    SSHString(const char * str) 
-        : size(strlen(str))
-        , data([](const char * str, uint32_t size){
-            uint8_t * tmp = new uint8_t[size+1];
-            memcpy(tmp, str, size);
-            return tmp;
-        }(str, this->size))
-    {
-    }  
-
-    SSHString(const char * str, int size) 
-        : size(size)
-        , data([](const char * str, uint32_t size){
-            uint8_t * tmp = new uint8_t[size+1];
-            memcpy(tmp, str, size);
-            return tmp;
-        }(str, size))
-    {
-    }  
-
-    SSHString(const uint8_t * str, int size) 
-        : size(size)
-        , data([](const char * str, uint32_t size){
-            uint8_t * tmp = new uint8_t[size+1];
-            memcpy(tmp, str, size);
-            return tmp;
-        }(reinterpret_cast<const char *>(str), size))
-    {
-    }  
-
-    char * cstr() const
-    {
-        this->data.get()[this->size] = 0;
-        return reinterpret_cast<char *>(this->data.get());
-    }
-
-};
+#include "../string.hpp"
 
 /* Error return codes */
 enum {
@@ -1100,7 +1043,6 @@ LIBSSH_API int ssh_channel_request_subsystem_client(ssh_session_struct * session
 LIBSSH_API int ssh_channel_request_pty_size_client(ssh_session_struct * session, ssh_channel channel, const char *term, int cols, int rows);
 
 LIBSSH_API int ssh_channel_request_shell_client(ssh_session_struct * session, ssh_channel channel);
-LIBSSH_API int ssh_channel_is_closed_client(ssh_session_struct * session, ssh_channel channel);
 LIBSSH_API int ssh_channel_is_eof_client(ssh_session_struct * session, ssh_channel channel);
 
 LIBSSH_API int ssh_channel_request_auth_agent_client(ssh_session_struct * session, ssh_channel channel);
@@ -1150,7 +1092,6 @@ LIBSSH_API int ssh_channel_open_reverse_forward_server(ssh_session_struct * sess
 LIBSSH_API int ssh_channel_open_auth_agent_server(ssh_session_struct * session, ssh_channel channel);
 LIBSSH_API int ssh_channel_request_send_exit_status_server(ssh_session_struct * session, ssh_channel channel, int exit_status);
 LIBSSH_API int ssh_channel_request_send_exit_signal_server(ssh_session_struct * session, ssh_channel channel, const char *signum, int core, const char *errmsg, const char *lang);
-LIBSSH_API int ssh_channel_is_closed_server(ssh_session_struct * session, ssh_channel channel);
 LIBSSH_API int ssh_set_auth_methods_server(ssh_session_struct *, int authmethods);
 
 

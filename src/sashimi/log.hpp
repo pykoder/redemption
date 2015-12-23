@@ -45,7 +45,7 @@ namespace aux_ {
 
     public:
         null_pointer()
-        : ptr(0)
+        : ptr(nullptr)
         {}
 
         void * get() const
@@ -107,7 +107,7 @@ static inline void LOGSYSLOG__REDEMPTION__INTERNAL(int priority, const char *for
         { "NOTICE", LOG_NOTICE },
         { "INFO", LOG_INFO },
         { "DEBUG", LOG_DEBUG },
-        { NULL, -1 }
+        { nullptr, -1 }
     };
     char message[8192];
     va_list vl;
@@ -129,7 +129,7 @@ static inline void LOGPRINT__REDEMPTION__INTERNAL(int priority, const char *form
         { "NOTICE", LOG_NOTICE },
         { "INFO", LOG_INFO },
         { "DEBUG", LOG_DEBUG },
-        { NULL, -1 }
+        { nullptr, -1 }
     };
     char message[8192];
     va_list vl;

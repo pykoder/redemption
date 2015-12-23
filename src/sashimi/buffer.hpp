@@ -85,8 +85,8 @@ struct ssh_buffer_struct {
 #ifdef DEBUG_BUFFER
       int doabort=0;
 
-      if((this->data == NULL) && (this->allocated != 0)){
-        syslog(LOG_INFO, "data is NULL!!! allocated=%d", this->allocated);
+      if((this->data == nullptr) && (this->allocated != 0)){
+        syslog(LOG_INFO, "data is nullptr!!! allocated=%d", this->allocated);
         doabort=1;
       }
       if(this->used > this->allocated){
@@ -115,7 +115,7 @@ struct ssh_buffer_struct {
         /* burn the data */
         memset(this->data, 0, this->allocated);
         free(this->data); 
-        this->data=NULL;
+        this->data = nullptr;
       }
       memset(this, 'X', sizeof(*this));
     }
@@ -136,7 +136,7 @@ struct ssh_buffer_struct {
       this->allocated = 0;
       if (this->data) {
           delete [] this->data;
-          this->data = NULL;
+          this->data = nullptr;
       }
       return 0;
     }

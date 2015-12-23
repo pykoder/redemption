@@ -225,7 +225,7 @@ struct ssh_channel_struct {
     , server_outbuffer(new ssh_buffer_struct)
     , stdout_buffer(new ssh_buffer_struct)
     , stderr_buffer(new ssh_buffer_struct)
-    , userarg(NULL)
+    , userarg(nullptr)
     , version(0)
     , exit_status(-1)
     , request_state(SSH_CHANNEL_REQ_STATE_NONE)
@@ -503,7 +503,7 @@ struct ssh_agent_struct {
         buffer.out_blob(blob.data.get(), blob.size);
 
         if (SSH_ERROR == ssh_pki_import_pubkey_blob(buffer, &key)){
-            return NULL;
+            return nullptr;
         }
         return key;
     }
@@ -833,8 +833,8 @@ struct ssh_agent_state_struct {
     char *comment;
     ssh_agent_state_struct()
     : state(SSH_AGENT_STATE_NONE)
-    , pubkey(NULL)
-    , comment(NULL)
+    , pubkey(nullptr)
+    , comment(nullptr)
     {
     }
 };
