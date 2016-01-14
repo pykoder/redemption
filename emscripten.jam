@@ -1,0 +1,61 @@
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt
+# or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+# This is a generic 'emscripten' toolset. Depending on the current system, it
+# forwards either to 'emscripten-unix' or 'emscripten-darwin' modules.
+
+
+# Boost.Build support for Emscipten.
+#
+# @todo add support for dynamic linking
+# @todo add support for --js-library, --pre-js, and --post-js options
+
+
+import feature ;
+#import os ;
+#import toolset ;
+import generators ;
+import type ;
+import toolset : flags ;
+
+
+rule init ( * )
+{
+}
+
+type.register OBJJS : bc ;
+generators.register-standard emscripten.objjs : CPP : OBJJS ;
+flags emscripten.objjs INCLUDES <include> ;
+flags emscripten.objjs CXXFLAGS <cxxflags> ;
+
+rule objjs ( name : extra-sources * : requirements * )
+{
+    echo "rule objjs\n" $(name) $(extra-sources) $(requirements) ;
+
+}
+
+actions objjs
+{
+     em++ --bind -c $(CXXFLAGS) -I$(INCLUDES) $(2) -o $(1)
+}
+
+
+type.register JS : js ;
+generators.register-composing emscripten.exejs : CPP OBJJS : JS ;
+flags emscripten.exejs INCLUDES <include> ;
+flags emscripten.exejs CXXFLAGS <cxxflags> ;
+
+rule exejs ( name : extra-sources * : requirements * )
+{
+    echo "rule exejs\n" $(name) $(extra-sources) $(requirements) ;
+
+}
+
+actions exejs
+{
+    em++ --bind $(CXXFLAGS) $(2) -o $(1)
+}
+
+
+
