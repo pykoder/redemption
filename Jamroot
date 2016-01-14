@@ -1,4 +1,4 @@
-
+using emscripten ;
 import os ;
 
 # below feature rule come from http://www.boost.org/doc/tools/build/doc/html/bbv2/extending/features.html
@@ -144,33 +144,40 @@ constant CXXFLAGS-COMMON :
 
 
 constant CXXFLAGS-GCC-4.7 :
-    <cxxflags>-Wunused-but-set-parameter
-    <cxxflags>-Wunused-but-set-variable
+# jenni    <cxxflags>-Wunused-but-set-parameter
+# jenni    <cxxflags>-Wunused-but-set-variable
 #     <cxxflags>-Wsuggest-attribute=pure
 #     <cxxflags>-Wsuggest-attribute=const
-    <cxxflags>-Wsuggest-attribute=noreturn
-    <cxxflags>-Wzero-as-null-pointer-constant
-    <cxxflags>-Wlogical-op
+# jenni    <cxxflags>-Wsuggest-attribute=noreturn
+# jenni    <cxxflags>-Wzero-as-null-pointer-constant
+# jenni    <cxxflags>-Wlogical-op
 #     <cxxflags>-Wno-aggressive-loop-optimizations
-    <cxxflags>-Wnormalized=nfc #disable ?
-    <cxxflags>-Wvector-operation-performance
+# jenni    <cxxflags>-Wnormalized=nfc #disable ?
+# jenni    <cxxflags>-Wvector-operation-performance
     <cxxflags>-Wdouble-promotion
-   <cxxflags>-Wmaybe-uninitialized
-    <cxxflags>-Wtrampolines
+# jenni   <cxxflags>-Wmaybe-uninitialized
+# jenni    <cxxflags>-Wtrampolines
+    
+    <cxxflags>-Wuninitialized
+    <cxxflags>-Wunused-parameter
+# jenni    <cxxflags>-Wunused-const-variable
+# jenni    <cxxflags>-Wint-to-void-pointer-cast
+
+    <cxxflags>-Wunused-parameter
 ;
 
 
 constant CXXFLAGS-GCC-4.8 :
     $(CXXFLAGS-GCC-4.7)
-    <cxxflags>-Wuseless-cast
+# jenni    <cxxflags>-Wuseless-cast
 ;
 
 
 constant CXXFLAGS-GCC-4.9 :
     $(CXXFLAGS-GCC-4.8)
-    <cxxflags>-Wconditionally-supported
+# jenni    <cxxflags>-Wconditionally-supported
     <cxxflags>-Wfloat-conversion
-    <cxxflags>-Wopenmp-simd
+# jenni    <cxxflags>-Wopenmp-simd
     <cxxflags>-Wparentheses
 
     <variant>release:<cxxflags>-flto
@@ -298,7 +305,7 @@ explicit install instexe install-bin install-etc install-etc-themes install-shar
 
 alias instexe : install-bin ;
 alias install : install-bin install-etc install-etc-themes install-share ;
-alias exe     : rdpproxy redrec reddec redver rdptproxy rdptanalyzer rdpclient ;
+alias exe     : rdpproxy redrec reddec redver rdptproxy rdptanalyzer ;
 
 
 install install-bin
@@ -549,22 +556,26 @@ exe rdptanalyzer
         $(EXE_DEPENDENCIES)
     ;
 
-exe rdpclient
-    : src/main/rdp_client.cpp
-        program_options
-        bitmap
-        openssl
-        crypto
-        png
-        z
-        dl
+#exe rdpclient
+#    : src/main/rdp_client.cpp
+#        program_options
+#        bitmap
+#        openssl
+#        crypto
+#        png
+#        z
+#        dl
+#        snappy
+#        krb5
+#        gssglue
+#    :
+#        <variant>coverage:<library>gcov
+#        <variant>coverage:<build>no
+#    ;
 
-        snappy
-        krb5
-        gssglue
-    :
-        $(EXE_DEPENDENCIES)
-    ;
+ objjs rdpclient.bc : src/main/rdp_client.cpp : <cxxflags>-g3 <include>/home/jinthavong/Téléchargements/emsdk_portable/emscripten/tag-1.35.7/system/include <include>/usr/include ;
+
+#js rdpclient.js : rdpclient.bc : <cxxflags>-g3 ;
 
 
 #
