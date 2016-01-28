@@ -20,23 +20,8 @@
  *
  */
 
-//typedef __gnuc_va_list va_list;
-
-//#define __GNUC_VA_LIST
-
-
-//#include <stdarg.h>
-//#include <varargs.h>
-//#include <stdio.h>
-#include <cstdio>
-
-//extern "C"
-//{
-//    #include <err.h>
-//}
-//
-//#include <iostream>
-//#include <string>
+#include <iostream>
+#include <string>
 
 #define LOGPRINT
 #include "log.hpp"

@@ -60,8 +60,7 @@ class ClientFront : public FrontAPI {
 
         memset(this->decrypt.key, 0, 16);
         memset(this->decrypt.update_key, 0, 16);
-        this->decrypt.encryptionMethod = 1;  /* todo : jenni : see what encryption level is supported low, medium high, 0 1 2*/
-
+        this->decrypt.encryptionMethod = 1;  /* todo : see what encryption level is supported : low, medium high, 0 1 2*/
 
         SSL_library_init();
     }
@@ -84,28 +83,22 @@ class ClientFront : public FrontAPI {
             }
             for (uint8_t i = 0; i < cfpie.numEvents; i++) {
                 if (!cfpie.payload.in_check_rem(1)) {
-                    LOG(LOG_WARNING, "Front::Received fast-path PUD, remains=%lu", cfpie.payload.in_remain());
+                    LOG(LOG_WARNING, "Front::Received fast-path PUD, remains=%zu", cfpie.payload.in_remain());
                     throw Error(ERR_RDP_DATA_TRUNCATED);
                 }
 
                 uint8_t byte = cfpie.payload.in_uint8();
                 uint8_t eventCode  = (byte & 0xE0) >> 5;
 
-
                 switch (eventCode) {
-
-
                     case FastPath::FASTPATH_INPUT_EVENT_SCANCODE:
                     {
                         FastPath::KeyboardEvent_Recv ke(cfpie.payload, byte);
 
                         if (this->verbose & 4) {
-                            LOG(LOG_INFO,
-                                "Front::Received fast-path PUD, scancode keyboardFlags=0x%X, keyCode=0x%X",
+                            LOG(LOG_INFO, "Front::Received fast-path PUD, scancode keyboardFlags=0x%X, keyCode=0x%X",
                                 ke.spKeyboardFlags, ke.keyCode);
                         }
-
-
                     }
                     break;
 
@@ -113,17 +106,15 @@ class ClientFront : public FrontAPI {
                     {
                         FastPath::MouseEvent_Recv me(cfpie.payload, byte);
                         if (this->verbose & 4) {
-                            LOG(LOG_INFO, "ClientFront::Received fast-path PUD, mouse pointerFlags=0x%X, xPos=0x%X, yPos=0x%X", me.pointerFlags, me.xPos, me.yPos);
+                            LOG(LOG_INFO, "ClientFront::Received fast-path PUD, mouse pointerFlags=0x%X, xPos=0x%X, yPos=0x%X",
+                                me.pointerFlags, me.xPos, me.yPos);
                         }
-
-
                     }
                     break;
 
                     default:
                         LOG(LOG_INFO, "Front::Received unexpected fast-path PUD, eventCode = %u", eventCode);
                         throw Error(ERR_RDP_FASTPATH);
-
                 }
 
                 if (this->verbose & 4) {
@@ -131,7 +122,7 @@ class ClientFront : public FrontAPI {
                 }
 
                 if (cfpie.payload.in_remain() != 0) {
-                    LOG(LOG_WARNING, "Front::Received fast-path PUD, remains=%lu", cfpie.payload.in_remain());
+                    LOG(LOG_WARNING, "Front::Received fast-path PUD, remains=%zu", cfpie.payload.in_remain());
                 }
             }
         }
@@ -143,7 +134,7 @@ class ClientFront : public FrontAPI {
 
     }
 
-    void flush() {
+    void flush() override {
         if (this->verbose > 10) {
             LOG(LOG_INFO, "--------- ClientFront ------------------");
             LOG(LOG_INFO, "flush()");
@@ -467,7 +458,6 @@ class ClientFront : public FrontAPI {
         }
     }
 
-
     void server_draw_text( Font const & font, int16_t x, int16_t y, const char * text, uint32_t fgcolor
                          , uint32_t bgcolor, const Rect & clip) {
         if (this->verbose > 10) {
@@ -507,20 +497,6 @@ class ClientFront : public FrontAPI {
         }
     }
 
-
-
 };
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-

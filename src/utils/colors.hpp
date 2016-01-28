@@ -25,7 +25,7 @@
 #define _REDEMPTION_UTILS_COLORS_HPP_
 
 #include <stdint.h>
-#include <assert.h>
+//#include <assert.h>
 #include <stdlib.h>
 #include <cstddef>
 #include "log.hpp"
@@ -324,7 +324,7 @@ inline BGRColor color_encode(const BGRColor c, const uint8_t out_bpp){
     case 24:
         return c;
     default:
-        assert(false);
+ //       assert(false);
     break;
     }
     return 0;

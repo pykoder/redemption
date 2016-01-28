@@ -159,11 +159,9 @@ constant CXXFLAGS-GCC-4.7 :
 # jenni    <cxxflags>-Wtrampolines
     
     <cxxflags>-Wuninitialized
-    <cxxflags>-Wunused-parameter
+# jenni    <cxxflags>-Wunused-parameter
 # jenni    <cxxflags>-Wunused-const-variable
 # jenni    <cxxflags>-Wint-to-void-pointer-cast
-
-    <cxxflags>-Wunused-parameter
 ;
 
 
@@ -260,9 +258,9 @@ project redemption
     <include>src/headers
     <include>src/main
     <include>modules/includes
-    <include>/usr/include
+#jenni    <include>/usr/include
     <include>tests
-
+    <include>/usr/include/openssl  #jenni add  ########################
     <conditional>@defines
 
     <variant>debug:<define>REDASSERT_AS_ASSERT
@@ -573,9 +571,20 @@ exe rdptanalyzer
 #        <variant>coverage:<build>no
 #    ;
 
- objjs rdpclient.bc : src/main/rdp_client.cpp : <cxxflags>-g3 <include>/home/jinthavong/Téléchargements/emsdk_portable/emscripten/tag-1.35.7/system/include <include>/usr/include ;
 
-#js rdpclient.js : rdpclient.bc : <cxxflags>-g3 ;
+objjs rdpclient.bc : src/main/rdp_client.cpp : <cxxflags>-g3 <include>/home/jinthavong/Téléchargements/emsdk_portable/emscripten/tag-1.35.7/system/include ;
+
+js rdpclient.js : rdpclient.bc : <cxxflags>-g3 ;
+
+#objjs penta.bc : penta.cpp : <cxxflags>-g3 <include>includes <include>/home/jinthavong/Téléchargements/emsdk_portable/emscripten/tag-1.35.7/system/include ;
+
+
+#objjs main.bc : main.cpp : <cxxflags>-g3 <include>includes <include>/home/jinthavong/Téléchargements/emsdk_portable/emscripten/tag-1.35.7/system/include ;
+
+#js pentamino.js : penta.bc main.bc : <cxxflags>-g3 ;
+
+
+
 
 
 #

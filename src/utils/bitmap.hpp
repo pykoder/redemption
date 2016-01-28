@@ -44,7 +44,7 @@
 #include <utility>
 #include <type_traits> // aligned_storage
 
-#include "error.h"
+//#include "error.h"
 #include "log.hpp"
 #include "bitfu.hpp"
 #include "colors.hpp"

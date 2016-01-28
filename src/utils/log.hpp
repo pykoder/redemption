@@ -49,12 +49,12 @@ namespace { namespace compiler_aux_ {
 #ifdef NDEBUG
 #define REDASSERT(x)
 #else
-# if defined(LOGPRINT) || defined(REDASSERT_AS_ASSERT)
-#  include <cassert>
-#  define REDASSERT(x) assert(x)
-# else
+//# if defined(LOGPRINT) || defined(REDASSERT_AS_ASSERT)
+//#  include <cassert>
+//#  define REDASSERT(x) assert(x)
+//# else
 #  define REDASSERT(x) if(!(x)){BOOM;}
-# endif
+//# endif
 #endif
 
 #include <stdio.h>

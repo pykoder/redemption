@@ -63,7 +63,7 @@ class LCGRandom : public Random
         }
     }
 
-    virtual uint32_t rand32()
+    virtual uint32_t rand32() override
     {
         return this->seed = 999331UL * this->seed + 200560490131ULL;
     }
@@ -86,7 +86,7 @@ class LCGRand : public Random
         }
     }
 
-    virtual uint32_t rand32()
+    virtual uint32_t rand32() override
     {
         return this->seed = 999331UL * this->seed + 7913UL;
     }
@@ -125,7 +125,7 @@ class UdevRandom : public Random
         }
     }
     
-    virtual uint32_t rand32()
+    virtual uint32_t rand32() override
     {
         uint32_t result = 0;
         char buffer[sizeof(result)];

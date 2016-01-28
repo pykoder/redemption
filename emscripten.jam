@@ -13,8 +13,8 @@
 
 
 import feature ;
-#import os ;
-#import toolset ;
+import os ;
+import toolset ;
 import generators ;
 import type ;
 import toolset : flags ;
@@ -37,7 +37,8 @@ rule objjs ( name : extra-sources * : requirements * )
 
 actions objjs
 {
-     em++ --bind -c $(CXXFLAGS) -I$(INCLUDES) $(2) -o $(1)
+#     em++ --bind -c $(CXXFLAGS) -I$(INCLUDES) $(2) -o $(1)
+      em++ -c $(CXXFLAGS) -I$(INCLUDES) $(2) -o $(1)
 }
 
 
@@ -54,7 +55,8 @@ rule exejs ( name : extra-sources * : requirements * )
 
 actions exejs
 {
-    em++ --bind $(CXXFLAGS) $(2) -o $(1)
+#    em++ --bind $(CXXFLAGS) $(2) -o $(1)
+    em++ $(CXXFLAGS) $(2) -o $(1)
 }
 
 

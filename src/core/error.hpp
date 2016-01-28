@@ -362,6 +362,7 @@ public:
             return "Composite Widget Destroyed without child list not empty.";
         case ERR_SESSION_PROBE_ENDING_IN_PROGRESS:
             return "Session logoff in progress";
+
         default:
             {
                 int requested_message_type = (with_id ? MSG_WITH_ID : MSG_WITHOUT_ID);
