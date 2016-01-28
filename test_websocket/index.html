@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>JNI DBG  ::  Utilisation des Websockets  ::  </title>
+    </head>
+
+    <body>
+        <h1>Communication avec socket.io !</h1>
+    
+        <p> Tests sur les <em>websockets</em> :</p><br />
+        <script src="/socket.io/socket.io.js"></script>
+
+        <p>
+            <img src="http://localhost:8080/wallix.png" style="width:220px;height:73px;" alt="logo"/>
+        </p>
+
+        <script>
+            var socket = io.connect('http://localhost:8080');
+            
+            // socket.on('info', function(info) {
+            //     alert('Le serveur a un message pour vous : ' + info.msg);
+            // }) 
+            
+            // socket.on('notification', function(notification) {
+            //    alert('Le serveur a une notification pour vous : ' + notification.msg);
+            // }) 
+            
+            // socket.on('image', function(data) {
+            //     alert('Le serveur a une image pour vous : ' + data.msg);
+            // }) 
+            
+            
+            var image = new Image();
+            window.onload=function() {
+            var canvas = document.getElementById("picture");
+            var context = canvas.getContext("2d");
+            // confirm('Canvas. Click OK to continue!');
+            // confirm("I feel awesome!");
+            // prompt("What is your name?");
+            }
+            
+            function dispMessage(str) {
+                document.getElementById("message").innerHTML = str;
+            }
+            
+            
+            socket.on('message', function(event) {
+                console.log("Client : Receiving from server : " + event.msg );
+                var message = JSON.parse(event.data);
+                switch(message.type) {
+                   case "text":
+                       dispMessage("Text received..." + message.content);
+                       console.log("Text received..." + event.data);
+                       break;
+                   case "image":
+                       var iname = message.path;
+                       dispMessage("Image received..." + iname); 
+                       message.src= iname
+                       message.onload = function () { context.drawImage(image, 0, 0); }
+                       console.log("Image received..." + message.content);
+                       
+                       
+                       var iname = message.path;
+                       dispMessage("Image received..." + iname); 
+                       message.src= iname
+                       message.onload = function () { context.drawImage(image, 0, 0); }
+                       console.log("Image received..." + message.content);
+                       
+                       
+                       break;
+                 }
+            })
+            </script>
+            
+
+
+            <script>
+            
+            function helloServer()
+            {
+                socket.send('{ "type": "image", "content":"Send me a picture"}');
+              //  socket.send('{ "type": "text", "content":"Send me a message"}');
+                console.log("helloServer");
+            }
+
+            socket.on('notification', function(x) { notification(x); });
+
+            function callserver() {
+              socket.emit('called', { request: 'Nothing' });
+            }
+            </script>
+  
+        
+        
+    </body>
+    
+    <body>
+        <h3>Notification from server</h3>
+        <fieldset><legend>Messages received</legend>
+            <div id="storage"></div>
+        </fieldset>
+
+    <form>
+        <input type="button" onclick="helloServer()" value="Send me some data">
+    </form>
+    <fieldset><legend>Message</legend> 
+        <div id="message"></div>
+    </fieldset>
+    <fieldset><legend>Picture</legend>
+       <canvas id="picture"></canvas>
+    </fieldset>
+    </body>
+
+    
+ 
+</html>
