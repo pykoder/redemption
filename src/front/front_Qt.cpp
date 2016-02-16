@@ -460,7 +460,6 @@ void Front_Qt::draw(const RDPPatBlt & cmd, const Rect & clip) {
         QColor foreColor = this->u32_to_qcolor(new_cmd24.fore_color);
 
         switch (cmd.rop) {
-
             // +------+-------------------------------+
             // | 0x5A | ROP: 0x005A0049 (PATINVERT)   |
             // |      | RPN: DPx                      |
@@ -481,10 +480,8 @@ void Front_Qt::draw(const RDPPatBlt & cmd, const Rect & clip) {
             // |      | RPN: P                        |
             // +------+-------------------------------+
             case 0xF0:
-                {
-                    this->_screen->paintCache().setBrush(backColor);
-                    this->_screen->paintCache().drawRect(rect.x, rect.y, rect.cx, rect.cy);
-                }
+                this->_screen->paintCache().setBrush(backColor);
+                this->_screen->paintCache().drawRect(rect.x, rect.y, rect.cx, rect.cy);
                 break;
             default:
                 std::cout << "RDPPatBlt brush_style = 03 " << (int) cmd.rop << std::endl;
@@ -493,12 +490,12 @@ void Front_Qt::draw(const RDPPatBlt & cmd, const Rect & clip) {
         
     } else {
          switch (cmd.rop) {
-             
                 // +------+-------------------------------+
                 // | 0x00 | ROP: 0x00000042 (BLACKNESS)   |
                 // |      | RPN: 0                        |
                 // +------+-------------------------------+
             case 0x00: // blackness
+                this->_screen->paintCache().setBrush(Qt::black);
                 this->_screen->paintCache().drawRect(rect.x, rect.y, rect.cx, rect.cy);
                 break;
                 // +------+-------------------------------+
@@ -578,7 +575,9 @@ void Front_Qt::draw(const RDPPatBlt & cmd, const Rect & clip) {
                 // |      | RPN: 1                        |
                 // +------+-------------------------------+
             case 0xFF: // whiteness
+                this->_screen->paintCache().setBrush(Qt::white);
                 this->_screen->paintCache().drawRect(rect.x, rect.y, rect.cx, rect.cy);
+                this->_screen->paintCache().setBrush(Qt::black);          
                 break;
             default:
                 std::cout << "RDPPatBlt " << (int) cmd.rop << std::endl;
@@ -903,7 +902,7 @@ void Front_Qt::server_set_pointer(const Pointer & cursor) {
 }
 
     
-/*
+
 ///////////////////////////////
 // APPLICATION 
 int main(int argc, char** argv){
@@ -920,4 +919,4 @@ int main(int argc, char** argv){
     app.exec();
   
 }
-*/
+
