@@ -1,7 +1,6 @@
 var fs = require('fs');
 
 // Loading index.html displayed to the client
-
 var server = require('http').createServer(function(req, res) {
     fs.readFile('./index.html', 'utf-8', function(error, content) {
         res.writeHead(200, {"Content-Type": "text/html"});
@@ -28,6 +27,11 @@ io.sockets.on('connection', function (socket) {
     socket.on("close", function () {console.log("Browser gone.");});
     
     
+    
+    
+    
+    
+ 
     /*
     socket.on('called', function(called){
         console.log("Request received." + called.request) ;
@@ -81,6 +85,7 @@ io.sockets.on('connection', function (socket) {
 */
 
 });
+
 
 
 
