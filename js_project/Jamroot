@@ -1,0 +1,34 @@
+using emscripten ;
+
+project pentamino
+    : requirements
+    <cxxflags>-Wall
+    : default-build release
+;
+
+#
+# Pentamino
+#
+
+path-constant TOP : . ;
+
+explicit pentamino ;
+
+install pentamino
+    : [ glob ./sys/pentamino/* ] pentamino.js pentamino.html
+    : <location>./sandbox
+    ;
+
+objjs penta.bc : ftests/penta.cpp : <cxxflags>-g3 ;
+
+js pentamino.js : penta.bc : <cxxflags>-g3 ;
+
+actions nothing { }
+#make pentamino.html : pentamino.js : @filter ;
+
+make pentamino.html : pentamino.js : nothing ;
+
+import testing ;
+
+# unit-test test_penta : test_penta.cpp libboost_unit_test ;
+
