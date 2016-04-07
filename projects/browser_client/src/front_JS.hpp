@@ -90,7 +90,7 @@
 
 
 
-class Front_JS : public FrontAPI
+class Front_JS_SDL : public FrontAPI
 { 
     enum uint32_t {
         INVERT_MASK = 0xffffffff,
@@ -318,11 +318,7 @@ public:
         }
         SDL_UnlockSurface(this->_browser._screen); // if (SDL_MUSTLOCK(this->_browser._screen))
     }
-       
-    void convertToScreenFormat(uint8_t & r,  uint8_t  & g,  uint8_t  & b,  Uint32 c_24) {
-        
-    }
-    
+
     
     Uint32 newPixel(const uint8_t * bitMapData, const int indice) {
         
@@ -732,7 +728,7 @@ public:
     //      CONSTRUCTOR
     //------------------------
     
-    Front_JS(int verb)
+    Front_JS_SDL(int verb)
     : FrontAPI(false, false)
     , verbose((uint32_t)verb)
     , _port(0)
@@ -746,7 +742,7 @@ public:
     }
     
 
-    ~Front_JS() {}
+    ~Front_JS_SDL() {}
 
 
 

@@ -46,7 +46,7 @@ objjs bitmap_data_allocator.bc
 	  <include>/home/cmoroldo/emsdk_portable/emscripten/master/system/include
 	;
 
-js client_rdp_JS.js 
+exejs client_rdp_JS.js 
      : 
         test_rdp_client_test_card_JS.bc 
         bitmap_data_allocator.bc
