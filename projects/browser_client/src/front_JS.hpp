@@ -30,7 +30,7 @@
 #include <math.h>
 
 #ifdef __EMSCRIPTEN__
-#include <emscripten.h> 
+#include <emscripten.h>
 #endif
 
 #include "RDP/caches/brushcache.hpp"
@@ -56,24 +56,24 @@
 #include "RDP/orders/RDPOrdersSecondaryGlyphCache.hpp"
 #include "RDP/orders/AlternateSecondaryWindowing.hpp"
 
-//#include <algorithm> 
+//#include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <string>
 //#include <boost/algorithm/string.hpp>
- 
+
 #include "core/RDP/pointer.hpp"
-#include "front_api.hpp" 
+#include "front_api.hpp"
 #include "channel_list.hpp"
 #include "mod_api.hpp"
 #include "bitmap_without_png.hpp"
-#include "RDP/caches/glyphcache.hpp" 
-#include "RDP/capabilities/glyphcache.hpp"
-#include "RDP/bitmapupdate.hpp" 
-#include "keymap2.hpp"  
-#include "client_info.hpp" 
+#include "RDP/caches/glyphcache.hpp"
+//#include "RDP/capabilities/glyphcache.hpp"
+#include "RDP/bitmapupdate.hpp"
+#include "keymap2.hpp"
+#include "client_info.hpp"
 
-  
+
 // ./../../emsdk_portable/emscripten/master/em++ -O2 tests/client_mods/test_rdp_client_test_card_JS.cpp -o bin/gcc-4.9.2/release/client_rdp_JS.html -I src/ -I src/utils -I src/core -std=c++11 -I src/configs/autogen -I src/configs/variant -I src/configs/include -I src/mod -I src/front -I src/acl -I src/capture -I src/keyboard -I src/keyboard/reversed_keymaps -I src/regex -I src/headers -I src/main -I tests -I modules/includes -I src/system/JS && iceweasel file:///home/cmoroldo/Bureau/redemption/bin/gcc-4.9.2/release/client_rdp_JS.html
 
 
@@ -84,42 +84,42 @@
 // #--shell-file templates/penta_template.html
 // -s EXPORTED_FUNCTIONS="['_run_main']"
 
-// source emsdk_env.sh 
-// . ./emsdk_env.sh 
-#include "../../utils/colors.hpp"  
+// source emsdk_env.sh
+// . ./emsdk_env.sh
+#include "../../utils/colors.hpp"
 
 
 
 class Front_JS_SDL : public FrontAPI
-{ 
+{
     enum uint32_t {
         INVERT_MASK = 0xffffffff,
         NATIVE_MASK = 0x00000000
     };
 
 private:
-    class Screen_JS 
+    class Screen_JS
     {
     public:
-        Front_JS    * _front;
-        SDL_Surface * _screen; 
-         
-         
-        Screen_JS(Front_JS * front)
+        Front_JS_SDL    * _front;
+        SDL_Surface * _screen;
+
+
+        Screen_JS(Front_JS_SDL * front)
             : _front(front)
-        {} 
- 
- 
+        {}
+
+
         void init_JS_screen() {
             SDL_Init(SDL_INIT_VIDEO);
             //SDL_WM_SetCaption("Remote Desktop Plop", NULL);
-            this->_screen = SDL_SetVideoMode( this->_front->_info.width 
+            this->_screen = SDL_SetVideoMode( this->_front->_info.width
                                             , this->_front->_info.height
                                             , 32
                                             , SDL_SWSURFACE | SDL_DOUBLEBUF
                                             );
         }
-        
+
     };
 
 /*
@@ -153,7 +153,7 @@ private:
 */
 
 public:
-    
+
     uint32_t          verbose;
     ClientInfo        _info;
     std::string       _userName;
@@ -186,16 +186,16 @@ public:
     uint8_t              _keyboardMods;
     CHANNELS::ChannelDefArray   _cl;
     uint32_t             _requestedFormatId;
-    std::string          _requestedFormatShortName;   
+    std::string          _requestedFormatShortName;
     uint8_t            * _bufferRDPClipboardChannel;
     size_t               _bufferRDPClipboardChannelSize;
     size_t               _bufferRDPClipboardChannelSizeTotal;
     int                  _bufferRDPCLipboardMetaFilePic_width;
     int                  _bufferRDPCLipboardMetaFilePic_height;
     int                  _bufferRDPClipboardMetaFilePicBPP;
-    
+
     Screen_JS _browser;
-    
+
 
 
     void init_front(ClientInfo & info) {
@@ -203,7 +203,7 @@ public:
         this->_mod_bpp = this->_info.bpp;
         this->_browser.init_JS_screen();
     }
-    
+
     SDL_Surface * getScreen(){
         return this->_browser._screen;
     }
@@ -235,41 +235,41 @@ public:
     }
     /*
     void send_buffer_to_clipboard();
-    
+
     void process_server_clipboard_data(int flags, InStream & chunk);
-    
+
     void send_FormatListPDU(const uint32_t * formatIDs, const std::string * formatListDataShortName, std::size_t formatIDs_size) ;
-    
+
     std::string HTMLtoText(const std::string & html);
-    
+
     void send_to_clipboard_Buffer(InStream & chunk);
 
     void send_textBuffer_to_clipboard(bool isTextHtml);
-    
+
     void send_imageBuffer_to_clipboard();
-    
+
     void empty_buffer() ;
     */
-    
-    
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //---------------------------------------
     //   GRAPHIC FUNCTIONS (factorization)
     //---------------------------------------
 
-    void draw_RDPScrBlt(int srcx, int srcy, const Rect & drect){ 
+    void draw_RDPScrBlt(int srcx, int srcy, const Rect & drect){
         SDL_Rect dPosition = {drect.x, drect.y, drect.cx, drect.cy};
         SDL_Rect sPosition = {srcx   , srcy   , drect.cx, drect.cy};
         SDL_BlitSurface(this->_browser._screen, &sPosition, this->_browser._screen, &dPosition);
     }
-    
-    
-    void draw_RDPScrBlt(int srcx, int srcy, const Rect & drect, uint32_t mask){ 
+
+
+    void draw_RDPScrBlt(int srcx, int srcy, const Rect & drect, uint32_t mask){
         SDL_Rect dPosition = {drect.x, drect.y, drect.cx, drect.cy};
         SDL_Rect sPosition = {srcx   , srcy   , drect.cx, drect.cy};
         SDL_BlitSurface(this->_browser._screen, &sPosition, this->_browser._screen, &dPosition);
-        
+
         SDL_LockSurface(this->_browser._screen); // if (SDL_MUSTLOCK(this->_browser._screen))
         for (int y = 0; y <  drect.cy; y++) {
             for (int x = 0; x < drect.cx; x++) {
@@ -280,9 +280,9 @@ public:
         SDL_UnlockSurface(this->_browser._screen); // if (SDL_MUSTLOCK(this->_browser._screen))
     }
 
-    
+
     void draw_bmp(const Rect & drect, const Bitmap & bitmap) {
-        
+
         Bitmap bitmapBpp(32, bitmap);
         const int16_t mincx = std::min<int16_t>(bitmapBpp.cx(), std::min<int16_t>(this->_info.width - drect.x, drect.cx));
         const uint8_t * bitMapData = bitmapBpp.data();
@@ -293,59 +293,59 @@ public:
             for (int x = 0; x < mincx; x++) {
                 int srcIndice( ((y * bitmapBpp.cx()) + x) * ((bitmapBpp.bpp())/8) );
                 *((Uint32*)this->_browser._screen->pixels + ((yStart - y) * this->_info.width) + x + drect.x) = newPixel(
-                    bitMapData, srcIndice);  
+                    bitMapData, srcIndice);
             }
         }
         SDL_UnlockSurface(this->_browser._screen); // if (SDL_MUSTLOCK(this->_browser._screen))
     }
 
-    
+
     void draw_MemBlt(const Rect & drect, const Bitmap & bitmap, int srcx, int srcy, uint32_t mask) {
         Bitmap bitmapBpp(32, bitmap);
         if (bitmapBpp.cx() <= 0 || bitmapBpp.cy() <= 0) {
             return;
         }
-        
+
         const uint8_t * bitMapData = bitmapBpp.data();
-        
+
         SDL_LockSurface(this->_browser._screen); // if (SDL_MUSTLOCK(this->_browser._screen))
         int yStart(drect.cy + drect.y-1);
         for (int y = 0; y <  drect.cy; y++) {
             for (int x = 0; x < drect.cx; x++) {
                 int indice( (((y + srcy) * (drect.cx + srcx)) + x + srcx) * ((bitmapBpp.bpp()+1)/8) );
-                *((Uint32*)this->_browser._screen->pixels + ((yStart - y) * this->_info.width) + x + drect.x) = newPixel(bitMapData, indice) ^ mask;  
+                *((Uint32*)this->_browser._screen->pixels + ((yStart - y) * this->_info.width) + x + drect.x) = newPixel(bitMapData, indice) ^ mask;
             }
         }
         SDL_UnlockSurface(this->_browser._screen); // if (SDL_MUSTLOCK(this->_browser._screen))
     }
 
-    
+
     Uint32 newPixel(const uint8_t * bitMapData, const int indice) {
-        
+
         uint8_t b =  bitMapData[indice  ];
         uint8_t g =  bitMapData[indice+1];
         uint8_t r =  bitMapData[indice+2];
 
         return SDL_MapRGBA(this->_browser._screen->format, r, g, b,  255);
-    }   
-    
-    
-    double abs(double x) { 
+    }
+
+
+    double abs(double x) {
         if (x > 0) {
             return x;
-        } 
+        }
         return -x;
     }
-    
-    
+
+
     void swap(double & x, double & y) {
         double z = x;
         x = y;
         y = z;
     }
-    
-    
-    
+
+
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //-----------------------------
@@ -355,16 +355,16 @@ public:
     virtual void draw(const RDPOpaqueRect & cmd, const Rect & clip) override {
         Rect rect(cmd.rect.intersect(clip).intersect(this->_info.width, this->_info.height));
         uint32_t color((uint32_t) color_decode_opaquerect(cmd.color, 16, this->mod_palette));
-        
+
         uint8_t b = (color & 0x00ff0000) >> 16;
         uint8_t g = (color & 0x0000ff00) >> 8;
         uint8_t r =  color & 0x000000ff;
-        
+
         SDL_Rect trect = {rect.x, rect.y, rect.cx, rect.cy};
         SDL_FillRect(this->_browser._screen, &trect, SDL_MapRGB(this->_browser._screen->format, r, g, b));
     }
-    
-    
+
+
     virtual void draw(const RDPScrBlt & cmd, const Rect & clip) override {
         const Rect rect = clip.intersect(this->_info.width, this->_info.height).intersect(cmd.rect);
         if (rect.isempty()) {
@@ -373,7 +373,7 @@ public:
 
         int srcx(rect.x + cmd.srcx - cmd.rect.x);
         int srcy(rect.y + cmd.srcy - cmd.rect.y);
-        
+
         switch (cmd.rop) {
 
             case 0x00: {SDL_Rect trect = {rect.y, rect.x, rect.cx, rect.cy};
@@ -392,12 +392,12 @@ public:
             case 0xFF: {SDL_Rect trect = {rect.y, rect.x, rect.cx, rect.cy};
                         SDL_FillRect(this->_browser._screen, &trect, 0xffffffff);}
                 break;
-            
+
             default: std::cout << "RDPScrBlt (" << std::hex << (int)cmd.rop << ")" << std::endl;
                 break;
         }
     }
-    
+
 
     virtual void draw(const RDPMemBlt & cmd, const Rect & clip, const Bitmap & bitmap) override {
         Rect rectBmp(cmd.rect);
@@ -411,8 +411,8 @@ public:
             case 0x00: {SDL_Rect trect = {rect.y, rect.x, rect.cx, rect.cy};
                         SDL_FillRect(this->_browser._screen, &trect, 0);}
                 break;
-            
-            case 0x22:  
+
+            case 0x22:
             {
                        const uint8_t * srcData = bitmap.data();
                        int srcx = cmd.srcx + (rect.x - cmd.rect.x);
@@ -429,11 +429,11 @@ public:
                        SDL_UnlockSurface(this->_browser._screen); // if (SDL_MUSTLOCK(this->_browser._screen))
             }
             break;
-                
+
             case 0x55: this->draw_MemBlt(rect, bitmap, cmd.srcx + (rect.x - cmd.rect.x), cmd.srcy + (rect.y - cmd.rect.y), INVERT_MASK);
                 break;
-            
-            case 0x66:  
+
+            case 0x66:
             {
                        const uint8_t * srcData = bitmap.data();
                        int srcx = cmd.srcx + (rect.x - cmd.rect.x);
@@ -450,26 +450,26 @@ public:
                        SDL_UnlockSurface(this->_browser._screen); // if (SDL_MUSTLOCK(this->_browser._screen))
             }
             break;
-                
+
             case 0x99:  // nothing to change
                 break;
-                
+
             case 0xCC: this->draw_MemBlt(rect, bitmap, cmd.srcx + (rect.x - cmd.rect.x), cmd.srcy + (rect.y - cmd.rect.y), NATIVE_MASK);
                 break;
-                
+
             case 0xEE: this->draw_MemBlt(rect, bitmap, cmd.srcx + (rect.x - cmd.rect.x), cmd.srcy + (rect.y - cmd.rect.y), NATIVE_MASK);
                 break;
-                
+
             case 0xFF: {SDL_Rect trect = {rect.y, rect.x, rect.cx, rect.cy};
                         SDL_FillRect(this->_browser._screen, &trect, 0xffffffff);}
                 break;
-                
+
             default: std::cout << "RDPMemBlt (" << std::hex << (int)cmd.rop << ")" << std::endl;
                 break;
         }
     }
-    
-    
+
+
     virtual void draw(const RDPDestBlt & cmd, const Rect & clip) override {
         const Rect rect = clip.intersect(this->_info.width, this->_info.height).intersect(cmd.rect);
         if (rect.isempty()) {
@@ -495,14 +495,14 @@ public:
                 break;
         }
     }
-    
-    
+
+
     virtual void draw(const RDPPatBlt & cmd, const Rect & clip) override {
         RDPPatBlt new_cmd24 = cmd;
         new_cmd24.back_color = color_decode_opaquerect(cmd.back_color, this->_mod_bpp, this->mod_palette);
         new_cmd24.fore_color = color_decode_opaquerect(cmd.fore_color, this->_mod_bpp, this->mod_palette);
         const Rect drect = clip.intersect(this->_info.width, this->_info.height).intersect(cmd.rect);
-        
+
         if (cmd.brush.style == 0x03 && (cmd.rop == 0xF0 || cmd.rop == 0x5A)) { // external
 
             switch (cmd.rop) {
@@ -530,13 +530,13 @@ public:
                     break;
 
                 case 0xF0:
-                    {   
-                        
+                    {
+
                         SDL_Rect trect = {drect.x, drect.y, drect.cx, drect.cy};
-                        SDL_FillRect(this->_browser._screen, &trect, SDL_MapRGBA(this->_browser._screen->format, 
-                                                                                 new_cmd24.back_color >> 16, 
-                                                                                 new_cmd24.back_color >> 8, 
-                                                                                 new_cmd24.back_color, 
+                        SDL_FillRect(this->_browser._screen, &trect, SDL_MapRGBA(this->_browser._screen->format,
+                                                                                 new_cmd24.back_color >> 16,
+                                                                                 new_cmd24.back_color >> 8,
+                                                                                 new_cmd24.back_color,
                                                                                  255));
 
                         SDL_LockSurface(this->_browser._screen);
@@ -544,17 +544,17 @@ public:
                         for (int y = 0; y < drect.cy; y++) {
                             shift = y%2;
                             for (int x = 0; x < drect.cx; x += 2) {
-                                *((Uint32*)this->_browser._screen->pixels + ((y + drect.y) * this->_info.width) + x + shift + drect.x) = SDL_MapRGBA(this->_browser._screen->format, 
-                                            new_cmd24.fore_color >> 16, 
-                                            new_cmd24.fore_color >> 8, 
-                                            new_cmd24.fore_color, 
-                                            255);                                                                                                                                                            
+                                *((Uint32*)this->_browser._screen->pixels + ((y + drect.y) * this->_info.width) + x + shift + drect.x) = SDL_MapRGBA(this->_browser._screen->format,
+                                            new_cmd24.fore_color >> 16,
+                                            new_cmd24.fore_color >> 8,
+                                            new_cmd24.fore_color,
+                                            255);
                             }
                         }
                         SDL_UnlockSurface(this->_browser._screen);
                     }
                     break;
-                    
+
                 default:
                     std::cout << "RDPPatBlt brush_style = 03 " << (int) cmd.rop << std::endl;
                     break;
@@ -571,7 +571,7 @@ public:
                     //this->invert_color(rect);
                     break;
 
-                case 0x5A: 
+                case 0x5A:
                     break;
 
                 case 0xAA: // change nothing
@@ -580,14 +580,14 @@ public:
                 case 0xFF: {SDL_Rect trect = {drect.y, drect.x, drect.cx, drect.cy};
                             SDL_FillRect(this->_browser._screen, &trect, 0xffffffff);}
                     break;
-                    
+
                 default:
                     std::cout << "RDPPatBlt " << (int) cmd.rop << std::endl;
                     break;
             }
         }
     }
-    
+
 
     virtual void draw(const RDPLineTo & cmd, const Rect & clip) override {
         const Rect rect = clip.intersect(this->_info.width, this->_info.height);
@@ -595,7 +595,7 @@ public:
         uint8_t b(color >> 16);
         uint8_t g(color >> 8);
         uint8_t r(color);
-        
+
         double x1(cmd.startx);
         double y1(cmd.starty);
         double x2(cmd.endx);
@@ -613,15 +613,15 @@ public:
         float err = 0.0;
         const float e1    = dy/dx;
         const float e2    = -1;
-        
+
         const int ystep = (y1 < y2) ? 1 : -1;
         int y = (int)y1;
-        
+
         const int xMin(rect.x);
         const int yMin(rect.y);
         const int xMax(rect.cx + rect.x);
         const int yMax(rect.cy + rect.y);
-        
+
         SDL_LockSurface(this->_browser._screen); // if (SDL_MUSTLOCK(this->_browser._screen))
         for(int x = 0; x < this->abs(dx); x++)
         {
@@ -645,7 +645,7 @@ public:
         if (drect.isempty() || bitmap.cx() <= 0 || bitmap.cy() <= 0){
             return ;
         }
-    
+
         switch (cmd.rop) {
             case 0xB8: // TODO
                 {
@@ -661,7 +661,7 @@ public:
 
                             if (this->newPixel(bitMapData, indice) != cmd.back_color) {
                                 currentPixel = newPixel(bitMapData, indice);
-                            } 
+                            }
                         }
                     }
                     SDL_UnlockSurface(this->_browser._screen); // if (SDL_MUSTLOCK(this->_browser._screen))
@@ -673,9 +673,9 @@ public:
         }
     }
 
-    
+
     void draw(const RDPBitmapData & bitmap_data, const uint8_t * data, size_t size, const Bitmap & bmp) override {
-        
+
         Rect rectBmp( bitmap_data.dest_left, bitmap_data.dest_top,
                      (bitmap_data.dest_right - bitmap_data.dest_left + 1),
                      (bitmap_data.dest_bottom - bitmap_data.dest_top + 1));
@@ -685,7 +685,7 @@ public:
         this->draw_bmp(rect, bmp);
     }
 
-    
+
     virtual void draw(const RDPMultiDstBlt & cmd, const Rect & clip) override {}
 
     virtual void draw(const RDPMultiOpaqueRect & cmd, const Rect & clip) override {}
@@ -727,7 +727,7 @@ public:
     //------------------------
     //      CONSTRUCTOR
     //------------------------
-    
+
     Front_JS_SDL(int verb)
     : FrontAPI(false, false)
     , verbose((uint32_t)verb)
@@ -740,7 +740,7 @@ public:
     {
         //this->_to_client_sender._front = this;
     }
-    
+
 
     ~Front_JS_SDL() {}
 
@@ -805,9 +805,9 @@ public:
 };
 
 
-Front_JS front(0);
+Front_JS_SDL front(0);
 
-        
+
 void eventLoop() {
     SDL_Event     event;
     SDL_PollEvent(&event);
@@ -815,20 +815,20 @@ void eventLoop() {
     switch(event.type)
     {
         case SDL_QUIT: SDL_FreeSurface(front.getScreen());
-                       SDL_Quit();          
+                       SDL_Quit();
         break;
 
-        case SDL_KEYDOWN: //printf("Key Down\n"); 
+        case SDL_KEYDOWN: //printf("Key Down\n");
         break;
-        
+
         case SDL_KEYUP : //printf("Key Up\n");
         break;
 
         case SDL_MOUSEMOTION: //printf("Mouse Motion\n");
         break;
 
-        case SDL_MOUSEBUTTONDOWN: //printf("Mouse Button Down\n"); 
-            
+        case SDL_MOUSEBUTTONDOWN: //printf("Mouse Button Down\n");
+
             //  Buttons
             if (event.button.y > front._info.height) {
                 if (event.button.x <= front._info.width/2) {
@@ -844,25 +844,25 @@ void eventLoop() {
                         //  4 Disconnect
                     }
                 }
-                
+
             //  Mouse click
             } else {
-                
-            }  
+
+            }
         break;
-        
+
         case SDL_MOUSEBUTTONUP : //printf("Mouse Button Up\n");
         break;
 
         case SDL_MOUSEWHEEL : //printf("Mouse Wheel\n");
         break;
-    
+
         default:
         break;
     }
 
     event.type = 0;
-    
+
     SDL_Flip(front.getScreen());
 }
 
@@ -871,7 +871,7 @@ void eventLoop() {
 
 /*
 int main(int argc, char** argv){
-    
+
     ClientInfo info;
     info.keylayout = 0x04C;
     info.console_session = 0;
@@ -883,7 +883,7 @@ int main(int argc, char** argv){
     front.init_front(info);
 
     emscripten_set_main_loop(eventLoop, front._fps, 0);
-    
+
     return 0;
 }*/
 
