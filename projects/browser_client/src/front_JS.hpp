@@ -291,7 +291,7 @@ public:
         int yStart(drect.cy + drect.y-1);
         for (int y = 0; y <  drect.cy; y++) {
             for (int x = 0; x < mincx; x++) {
-                int srcIndice( ((y * bitmapBpp.cx()) + x) * ((bitmapBpp.bpp())/8) );
+                int srcIndice( ((y * bitmapBpp.cx()) + x) * ((bitmapBpp.bpp()+1)/8) );
                 *((Uint32*)this->_browser._screen->pixels + ((yStart - y) * this->_info.width) + x + drect.x) = newPixel(
                     bitMapData, srcIndice);
             }
